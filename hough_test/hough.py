@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-img = cv2.imread('img1.jpg')
+img = cv2.imread('img2.jpg')
 row, column = img.shape[0], img.shape[1]
 print "row =", row, "column =", column
 
@@ -32,7 +32,9 @@ lines = cv2.HoughLines(intersection,1,np.pi/180,80)
 for i in range(0, len(lines)):
     for rho,theta in lines[i]:
         # ignore horizontal lines
-        if abs(theta - np.pi/2) > 1:
+        # only shows lines that are in 60-degree difference to vertical line
+        if theta < 60*np.pi/180 or (np.pi - theta) < 60*np.pi/180:
+            # draw line
             a = np.cos(theta)
             b = np.sin(theta)
             x0 = a*rho
@@ -43,6 +45,8 @@ for i in range(0, len(lines)):
             y2 = int(y0 - 1200*(a))
 
             cv2.line(img,(x1,y1),(x2,y2),(0,0,255),2)
+            # draw dot
+            cv2.circle(img,(int(x0-np.tan(theta)*(row-y0)),int(row)),7,(0,255,0),5)
 
 cv2.imwrite('all_houghlines.jpg',img)
 
