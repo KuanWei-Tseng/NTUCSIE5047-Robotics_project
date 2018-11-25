@@ -2,17 +2,18 @@ import cv2
 import numpy as np
 
 class rawImage:
-    
+    """
+    image processing functions
+    """
     # 3-5-5-5-3 octogonal kernel
-    _kernel = np.ones((5, 5), np.uint8)
-    _kernel[0,0] = _kernel[4,0] = _kernel[0,4] = kernel[4,4] = 0
+    _kernel = np.array([[0,1,1,1,0],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[0,1,1,1,0]]).astype(np.uint8)
 
     def __init__(self, img):
         self._row, self._column = img.shape[0], img.shape[1]
         self._img = np.copy(img)
 
     # returns the course deviation in pixel count
-    def find_deviation(self):
+    def findDeviation(self):
         
         # yellow and white markings detection
         color_mark = np.logical_and(self._img[:,:,1] > 180, self._img[:,:,2] > 180).astype(np.uint8)

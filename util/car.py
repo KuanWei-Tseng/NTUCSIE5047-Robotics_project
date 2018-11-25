@@ -1,8 +1,9 @@
 from AMSpi import AMSpi
-import time
 
 class car:
-
+    """
+    car action functions
+    """
     def __init__(self):
         self.amspi = AMSpi()
         # Calling AMSpi() we will use default pin numbering: BCM (use GPIO numbers)
