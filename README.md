@@ -3,5 +3,4 @@
 Robotics final project
 
 /hough-test/hough.py generates vertical road markings images.
-
-added deviation check
+/util/rawImage.py contains object oriented deviation check
