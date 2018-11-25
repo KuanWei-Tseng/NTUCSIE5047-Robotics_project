@@ -18,7 +18,7 @@ cv2.imwrite('color_mark.jpg', color_mark*255)
 
 # gray scale canny edge detection
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-blur = cv2.GaussianBlur(img, (5, 5), 0)
+blur = cv2.GaussianBlur(gray, (5, 5), 0)
 edges = cv2.Canny(blur,50,150,apertureSize = 3)
 
 cv2.imwrite('canny.jpg', edges)
