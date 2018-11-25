@@ -8,8 +8,8 @@ class rawImage:
     _kernel[0,0] = _kernel[4,0] = _kernel[0,4] = kernel[4,4] = 0
 
     def __init__(self, img):
-        _row, _column = img.shape[0], img.shape[1]
-        _img = np.copy(img)
+        self._row, self._column = img.shape[0], img.shape[1]
+        self._img = np.copy(img)
 
     # returns the course deviation in pixel count
     def find_deviation(self):
