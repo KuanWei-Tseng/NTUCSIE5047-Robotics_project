@@ -2,6 +2,5 @@
 
 Robotics final project
 
-/hough-test/hough.py generates vertical road markings images.\
-/util/rawImage.py contains object oriented deviation check\
-/util/car.py contains object "car"
+hough.py should work fine now.
+manual controll code is in Pi.py waiting to be tested.
