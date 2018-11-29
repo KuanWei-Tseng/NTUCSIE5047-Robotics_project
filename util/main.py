@@ -1,6 +1,6 @@
 from Pi import Pi
 
-def main:
+def main():
     print("start running")
     print("press any key to stop")
     pipi = Pi()
