@@ -16,7 +16,8 @@ class car:
 
     def forward(self, spd = 100):
         print("GO: clockwise")
-        self.amspi.run_dc_motors([amspi.DC_Motor_1, amspi.DC_Motor_2, amspi.DC_Motor_3, amspi.DC_Motor_4], speed = spd)
+        self.amspi.run_dc_motors([amspi.DC_Motor_1, amspi.DC_Motor_2], clockwise = False, speed = spd)
+        self.amspi.run_dc_motors([amspi.DC_Motor_3, amspi.DC_Motor_4], speed = spd)
         
     def stop(self):
         print("Stop")
@@ -24,14 +25,15 @@ class car:
 
     def backward(self, spd = 100):
         print("GO: counterclockwise")
-        self.amspi.run_dc_motors([amspi.DC_Motor_1, amspi.DC_Motor_2, amspi.DC_Motor_3, amspi.DC_Motor_4], clockwise = False, speed = spd)
+        self.amspi.run_dc_motors([amspi.DC_Motor_1, amspi.DC_Motor_2], speed = spd)
+        self.amspi.run_dc_motors([amspi.DC_Motor_3, amspi.DC_Motor_4], clockwise = False, speed = spd)
 
     def turnRight(self, leftSpd = 50, rightSpd = 50):
         print("Turn right")
-        self.amspi.run_dc_motors([amspi.DC_Motor_1, amspi.DC_Motor_3], speed = leftSpd)
-        self.amspi.run_dc_motors([amspi.DC_Motor_2, amspi.DC_Motor_4], clockwise = False, speed = rightSpd)
+        self.amspi.run_dc_motors([amspi.DC_Motor_1, amspi.DC_Motor_3], clockwise = False, speed = leftSpd)
+        self.amspi.run_dc_motors([amspi.DC_Motor_2, amspi.DC_Motor_4], speed = rightSpd)
 
     def turnLeft(self, leftSpd = 50, rightSpd = 50):
         print("Turn left")
-        self.amspi.run_dc_motors([amspi.DC_Motor_1, amspi.DC_Motor_3], clockwise=False, speed = leftSpd)
-        self.amspi.run_dc_motors([amspi.DC_Motor_2, amspi.DC_Motor_4], speed = rightSpd)
+        self.amspi.run_dc_motors([amspi.DC_Motor_1, amspi.DC_Motor_3], speed = leftSpd)
+        self.amspi.run_dc_motors([amspi.DC_Motor_2, amspi.DC_Motor_4], clockwise = False, speed = rightSpd)
