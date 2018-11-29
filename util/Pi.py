@@ -17,6 +17,7 @@ class Pi:
 
     # autodrive until keyboard interrupts
     def autoDrive(self, elapse):
+        """
         # fds to listen to 
         inputready, outputready, exceptrdy = select.select([0], [], [])
 
@@ -28,9 +29,15 @@ class Pi:
                     print("keyboard interrupt detected, stop and exit.")
                     self.myCar.stop()
                     return
-
+        """
+        time.sleep(2)
+        self.myCar.forward()
+        time.sleep(10)
+        self.myCar.stop()
+        """
+            self.myCar.turnLeft()
             # get the image
-            
+
             img = rawImage(image)
             deviation = img.findDeviation()
 
@@ -42,5 +49,5 @@ class Pi:
                 self.myCar.turnRight(deviation, deviation)
 
             time.sleep(elapse)
-
+        """
         return
