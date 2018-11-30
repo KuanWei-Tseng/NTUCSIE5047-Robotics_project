@@ -23,17 +23,17 @@ class rawImage:
         #cv2.imwrite("equal.jpg", eq)
 
         # white and yellow detection
-        temp = np.logical_and(eq[:,:,1] > 160, eq[:,:,2] > 160)
+        temp = np.logical_and(eq[:,:,1] > 140, eq[:,:,2] > 140)
 
         # yellow color mark
-        y_cm = np.logical_and(temp, eq[:,:,0] < 100).astype(np.uint8)
+        y_cm = np.logical_and(temp, eq[:,:,0] < 140).astype(np.uint8)
         # close then open
         y_cm = cv2.morphologyEx(cv2.morphologyEx(y_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
 
         #cv2.imwrite("y_mark.jpg", y_cm*255)
 
         # white color mark
-        w_cm = np.logical_and(temp, eq[:,:,0] > 160).astype(np.uint8)
+        w_cm = np.logical_and(temp, eq[:,:,0] > 140).astype(np.uint8)
         # close then open
         w_cm = cv2.morphologyEx(cv2.morphologyEx(w_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         #cv2.imwrite("w_mark.jpg", w_cm*255)
@@ -48,8 +48,8 @@ class rawImage:
         # intersection of canny and road markings
         y_inter = (edges * y_cm > 0).astype(np.uint8)
         w_inter = (edges * w_cm > 0).astype(np.uint8)
-        y_inter = cv2.dilate(y_inter, kernel, iterations = 1)
-        w_inter = cv2.dilate(w_inter, kernel, iterations = 1)
+        y_inter = cv2.dilate(y_inter, self._kernel, iterations = 1)
+        w_inter = cv2.dilate(w_inter, self._kernel, iterations = 1)
         #cv2.imwrite("y_inter.jpg", y_inter*255)
         #cv2.imwrite("w_inter.jpg", w_inter*255)
 
@@ -64,7 +64,7 @@ class rawImage:
             # ignore horizontal lines
             # only shows lines that are in 80-degree difference to vertical line
             if theta < 80*np.pi/180 or (np.pi - theta) < 80*np.pi/180:
-                offset = int(np.cos(theta)*rho-np.tan(theta)*(row-np.sin(theta)*rho))
+                offset = int(np.cos(theta)*rho-np.tan(theta)*(self._row-np.sin(theta)*rho))
                 if offset > y_offset:
                     y_rho, y_theta, y_offset = rho, theta, offset
 
@@ -75,7 +75,7 @@ class rawImage:
             # ignore horizontal lines
             # only shows lines that are in 80-degree difference to vertical line
             if theta < 80*np.pi/180 or (np.pi - theta) < 80*np.pi/180:
-                offset = int(np.cos(theta)*rho-np.tan(theta)*(row-np.sin(theta)*rho))
+                offset = int(np.cos(theta)*rho-np.tan(theta)*(self._row-np.sin(theta)*rho))
                 if offset > y_offset and offset < w_offset:
                     w_rho, w_theta, w_offset = rho, theta, offset
         """
@@ -89,7 +89,7 @@ class rawImage:
         x2 = int(x0 - 1200*(-b))
         y2 = int(y0 - 1200*(a))
 
-        cv2.line(img,(x1,y1),(x2,y2),(0,255,255),2)
+        cv2.line(self._img,(x1,y1),(x2,y2),(0,255,255),2)
 
         # draw line
         a = np.cos(w_theta)
@@ -101,20 +101,20 @@ class rawImage:
         x2 = int(x0 - 1200*(-b))
         y2 = int(y0 - 1200*(a))
 
-        cv2.line(img,(x1,y1),(x2,y2),(255,255,255),2)
+        cv2.line(self._img,(x1,y1),(x2,y2),(255,255,255),2)
 
         # draw two offset dots
         if y_offset >= 0:
-            cv2.circle(img,(int(y_offset),int(row)),7,(0,255,255),5)
-        if w_offset < column:
-            cv2.circle(img,(int(w_offset),int(row)),7,(255,255,255),5)
+            cv2.circle(self._img,(int(y_offset),int(self._row)),7,(0,255,255),5)
+        if w_offset < self._column:
+            cv2.circle(self._img,(int(w_offset),int(self._row)),7,(255,255,255),5)
 
-        cv2.imwrite("road_lines.jpg",img)
-
+        cv2.imwrite("road_lines.jpg",self._img)
+        
         print("y_offset = {}, w_offset = {}".format(y_offset, w_offset))
         """
         error = 156
-        middle = column/2 + error
+        middle = self._column/2 + error
         deviation = int((w_offset + y_offset)/2) - middle
         """
         print("middle = {}".format(middle))
