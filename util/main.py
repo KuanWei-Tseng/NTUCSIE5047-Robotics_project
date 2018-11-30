@@ -1,11 +1,14 @@
 from Pi import Pi
+import sys
 
-def main():
-    print("start running")
-    print("press any key to stop")
-    pipi = Pi()
+def main(type):
+    if type == "auto":
+        pipi = Pi()
+    else:
+        pipi = Pi(manual = True)
     
     return
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])
+

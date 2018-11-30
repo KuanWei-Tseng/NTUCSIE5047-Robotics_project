@@ -7,6 +7,7 @@ import curses
 class Pi:
     """
     highest level of the classes
+    init car object then call the car controlling routine
     """
     def __init__(self, manual = False, elapse = 0.1):
         self.myCar = car()
@@ -18,39 +19,41 @@ class Pi:
 
     # autodrive until keyboard interrupts
     def autoDrive(self, elapse):
-        """
+        print("AutoDrive mode started")
+        print("Press ENTER to start")
         # fds to listen to 
         inputready, outputready, exceptrdy = select.select([0], [], [])
 
         while True:
-            for i in inputready:
-                # keyboard input
-                if i == 0:
-                    msg = input()
-                    print("keyboard interrupt detected, stop and exit.")
-                    self.myCar.stop()
-                    return
-        """
-        time.sleep(2)
-        self.myCar.forward()
-        time.sleep(10)
-        self.myCar.stop()
-        """
-            self.myCar.turnLeft()
-            # get the image
+            try:
+                for i in inputready:
+                    # keyboard input
+                    if i == 0:
+                        msg = input()
+                        print("keyboard interrupt detected, stop and exit.")
+                        self.myCar.stop()
+                        return
+                    
+                self.myCar.turnLeft()
+                # get the image
 
-            img = rawImage(image)
-            deviation = img.findDeviation()
+                img = rawImage(image)
+                deviation = img.findDeviation()
+                
+                # start running
+                
+                if (deviation < 0):
+                    self.myCar.turnLeft(deviation, deviation)
+                elif (deviation > 0):
+                    self.myCar.turnRight(deviation, deviation)
+                    
+                time.sleep(elapse)
+            except Exception as e:
+                pass
 
-            # start running
-            
-            if (deviation < 0):
-                self.myCar.turnLeft(deviation, deviation)
-            elif (deviation > 0):
-                self.myCar.turnRight(deviation, deviation)
-
-            time.sleep(elapse)
-        """
+            finally:
+                self.myCar.stop()
+                break
         return
 
     def manualDrive(self):
@@ -77,11 +80,11 @@ class Pi:
 
                 elif event == curses.KEY_LEFT:
                     screen.addstr(0, 0, "LEFT")
-                    self.myCar.turnLeft()
+                    self.myCar.turnLeft(leftSpd = 0, rightSpd = 100)
 
                 elif event == curses.KEY_RIGHT:
                     screen.addstr(0, 0, "RIGHT")
-                    self.myCar.turnRight()
+                    self.myCar.turnRight(leftSpd = 100, rightSpd = 0)
                     
                 # nothing is pressed
                 elif event == -1:
@@ -102,4 +105,4 @@ class Pi:
                 self.myCar.stop()
                 print("END")
 
-    return
+        return
