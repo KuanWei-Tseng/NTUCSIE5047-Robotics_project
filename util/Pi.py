@@ -3,14 +3,24 @@ from rawImage import rawImage
 import numpy as np
 import time
 import curses
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 
 class Pi:
     """
     highest level of the classes
     init car object then call the car controlling routine
     """
-    def __init__(self, manual = False, elapse = 0.1):
+    def __init__(self, manual = False, rate = 10):
         self.myCar = car()
+        # initialize the camera and grab a reference to the raw camera capture
+        self.camera = PiCamera()
+        self.camera.resolution = (640, 480)
+        self.camera.framerate = rate
+        self.rawCapture = PiRGBArray(self.camera, size=(640, 480))
+        # allow the camera to warmup
+        time.sleep(0.1)
+
         # manual controll
         if manual:
             self.manualDrive()
@@ -20,40 +30,36 @@ class Pi:
     # autodrive until keyboard interrupts
     def autoDrive(self, elapse):
         print("AutoDrive mode started")
-        print("Press ENTER to start")
-        # fds to listen to 
-        inputready, outputready, exceptrdy = select.select([0], [], [])
+        print("Press ENTER to start, press q to exit")
+        nothing = raw_input()
 
-        while True:
+        for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
             try:
-                for i in inputready:
-                    # keyboard input
-                    if i == 0:
-                        msg = input()
-                        print("keyboard interrupt detected, stop and exit.")
-                        self.myCar.stop()
-                        return
-                    
-                self.myCar.turnLeft()
                 # get the image
-
+                image = frame.array()
+                key = cv2.waitKey(1) & 0xFF
+                # clear the stream in preparation for the next frame
+                self.rawCapture.truncate(0)
+                if key == ord('q'):
+                    break
                 img = rawImage(image)
                 deviation = img.findDeviation()
-                
+            
                 # start running
-                
                 if (deviation < 0):
                     self.myCar.turnLeft(deviation, deviation)
                 elif (deviation > 0):
                     self.myCar.turnRight(deviation, deviation)
                     
-                time.sleep(elapse)
-            except Exception as e:
-                pass
+            except:
+                print("error happened")
 
             finally:
-                self.myCar.stop()
                 break
+
+        print("ended")
+        self.car.stop()
+
         return
 
     def manualDrive(self):
