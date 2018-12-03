@@ -13,11 +13,10 @@ hsl[:,:,2] = cv2.equalizeHist(hsl[:,:,2])
 eq = cv2.cvtColor(hsl, cv2.COLOR_HSV2BGR)
 cv2.imwrite("equal.jpg", eq)
 
-
 kernel = np.ones((5, 5), np.uint8)
 # 3-5-5-5-3 octogonal kernel
 kernel[0][0] = kernel[4][0] = kernel[0][4] = kernel[4][4] = 0
-
+vote = 250
 # white and yellow detection
 temp = np.logical_and(eq[:,:,1] > 160, eq[:,:,2] > 160)
 
@@ -49,8 +48,8 @@ cv2.imwrite("y_inter.jpg", y_inter*255)
 cv2.imwrite("w_inter.jpg", w_inter*255)
 
 # Hough line detection
-y_lines = cv2.HoughLines(y_inter, 1, np.pi/180, 200)
-w_lines = cv2.HoughLines(w_inter, 1, np.pi/180, 200)
+y_lines = cv2.HoughLines(y_inter, 1, np.pi/180, vote)
+w_lines = cv2.HoughLines(w_inter, 1, np.pi/180, vote)
 
 # find the rightmost yellow line
 y_rho, y_theta, y_offset = 0, 0, -float("inf")
