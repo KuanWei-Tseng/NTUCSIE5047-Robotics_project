@@ -30,7 +30,7 @@ class car:
         self.pwm1.start(0)
         self.pwm2.start(0)
 
-    def forward(self, spd = 9):
+    def forward(self, leftSpd = 75, rightSpd = 75):
         GPIO.output(self.in1_pin, GPIO.HIGH)
         GPIO.output(self.in2_pin, GPIO.LOW)
         GPIO.output(self.in3_pin, GPIO.HIGH)
@@ -39,10 +39,10 @@ class car:
         GPIO.output(self.in6_pin, GPIO.LOW)
         GPIO.output(self.in7_pin, GPIO.HIGH)
         GPIO.output(self.in8_pin, GPIO.LOW)
-        self.pwm1.ChangeDutyCycle(spd)
-        self.pwm2.ChangeDutyCycle(spd)
+        self.pwm1.ChangeDutyCycle(leftSpd)
+        self.pwm2.ChangeDutyCycle(rightSpd)
         
-    def backward(self, spd = 9):
+    def backward(self, leftSpd = 75, rightSpd = 75):
         GPIO.output(self.in1_pin, GPIO.LOW)
         GPIO.output(self.in2_pin, GPIO.HIGH)
         GPIO.output(self.in3_pin, GPIO.LOW)
@@ -51,8 +51,8 @@ class car:
         GPIO.output(self.in6_pin, GPIO.HIGH)
         GPIO.output(self.in7_pin, GPIO.LOW)
         GPIO.output(self.in8_pin, GPIO.HIGH)
-        self.pwm1.ChangeDutyCycle(spd)
-        self.pwm2.ChangeDutyCycle(spd)
+        self.pwm1.ChangeDutyCycle(leftSpd)
+        self.pwm2.ChangeDutyCycle(rightSpd)
     
     def stop(self):
         GPIO.output(self.in1_pin, GPIO.LOW)
@@ -64,7 +64,7 @@ class car:
         GPIO.output(self.in7_pin, GPIO.LOW)
         GPIO.output(self.in8_pin, GPIO.LOW)
 
-    def turnRight(self, leftSpd = 4, rightSpd = 9):
+    def turnLeftSharp(self, leftSpd = 75, rightSpd = 75):
         GPIO.output(self.in1_pin, GPIO.LOW)
         GPIO.output(self.in2_pin, GPIO.HIGH)
         GPIO.output(self.in3_pin, GPIO.LOW)
@@ -76,17 +76,17 @@ class car:
         self.pwm1.ChangeDutyCycle(leftSpd)
         self.pwm2.ChangeDutyCycle(rightSpd)
 
-    def turnLeft(self, leftSpd = 9, rightSpd = 4):
-        GPIO.output(self.in1_pin, GPIO.LOW)
-        GPIO.output(self.in2_pin, GPIO.HIGH)
-        GPIO.output(self.in3_pin, GPIO.LOW)
-        GPIO.output(self.in4_pin, GPIO.HIGH)
+    def turnRightSharp(self, leftSpd = 75, rightSpd = 75):
+        GPIO.output(self.in1_pin, GPIO.HIGH)
+        GPIO.output(self.in2_pin, GPIO.LOW)
+        GPIO.output(self.in3_pin, GPIO.HIGH)
+        GPIO.output(self.in4_pin, GPIO.LOW)
         GPIO.output(self.in5_pin, GPIO.LOW)
         GPIO.output(self.in6_pin, GPIO.HIGH)
         GPIO.output(self.in7_pin, GPIO.LOW)
         GPIO.output(self.in8_pin, GPIO.HIGH)
-        self.pwm1.ChangeDutyCycle(spd)
-        self.pwm2.ChangeDutyCycle(spd)
+        self.pwm1.ChangeDutyCycle(leftSpd)
+        self.pwm2.ChangeDutyCycle(rightSpd)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         try:
@@ -94,7 +94,3 @@ class car:
             GPIO.cleanup()
         except RuntimeWarning:
             return True
-
-
-
-

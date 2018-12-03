@@ -54,8 +54,8 @@ class rawImage:
         #cv2.imwrite("w_inter.jpg", w_inter*255)
 
         # Hough line detection
-        y_lines = cv2.HoughLines(y_inter, 1, np.pi/180, 200)
-        w_lines = cv2.HoughLines(w_inter, 1, np.pi/180, 200)
+        y_lines = cv2.HoughLines(y_inter, 1, np.pi/180, 250)
+        w_lines = cv2.HoughLines(w_inter, 1, np.pi/180, 250)
 
         # find the rightmost yellow line
         y_rho, y_theta, y_offset = 0, 0, -float("inf")
