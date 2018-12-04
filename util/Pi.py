@@ -50,7 +50,8 @@ class Pi:
                     self.myCar.turnLeft(deviation, deviation)
                 elif (deviation > 0):
                     self.myCar.turnRight(deviation, deviation)
-                    
+
+                time.sleep(elapse)
             except:
                 print("error happened")
 
