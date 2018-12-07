@@ -19,12 +19,13 @@ while True:
         elif event == curses.KEY_DOWN:
             screen.addstr(0, 0, "DOWN Arrow Key pressed")
         elif event == -1:
-            screen.move(0, 0)
+            pass
+            #screen.move(0, 0)
         else:
             break
         screen.clrtoeol()
         screen.refresh()
-        time.sleep(0.1)
+        time.sleep(0.01)
     except Exception as e:
         # No input
         pass
