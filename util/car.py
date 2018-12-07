@@ -8,8 +8,8 @@ class car:
     in2_pin = 22
     in3_pin = 23
     in4_pin = 18
-    in5_pin = 26
-    in6_pin = 19
+    in5_pin = 19
+    in6_pin = 26
     in7_pin = 20
     in8_pin = 16
 
@@ -43,8 +43,8 @@ class car:
             leftSpd = 88
         if rightSpd >= 88:
             rightSpd = 88
-        self.pwm1.ChangeDutyCycle(leftSpd)
-        self.pwm2.ChangeDutyCycle(rightSpd)
+        self.pwm1.ChangeDutyCycle(rightSpd)
+        self.pwm2.ChangeDutyCycle(leftSpd)
         
     def backward(self, leftSpd = 75, rightSpd = 75):
         GPIO.output(self.in1_pin, GPIO.LOW)
@@ -85,8 +85,8 @@ class car:
             leftSpd = 88
         if rightSpd >= 88:
             rightSpd = 88
-        self.pwm1.ChangeDutyCycle(leftSpd)
-        self.pwm2.ChangeDutyCycle(rightSpd)
+        self.pwm1.ChangeDutyCycle(rightSpd)
+        self.pwm2.ChangeDutyCycle(leftSpd)
 
     def turnRightSharp(self, leftSpd = 75, rightSpd = 75):
         GPIO.output(self.in1_pin, GPIO.HIGH)
@@ -101,8 +101,8 @@ class car:
             leftSpd = 88
         if rightSpd >= 88:
             rightSpd = 88
-        self.pwm1.ChangeDutyCycle(leftSpd)
-        self.pwm2.ChangeDutyCycle(rightSpd)
+        self.pwm1.ChangeDutyCycle(rightSpd)
+        self.pwm2.ChangeDutyCycle(leftSpd)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         try:
