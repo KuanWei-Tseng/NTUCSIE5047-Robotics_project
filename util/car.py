@@ -6,12 +6,12 @@ class car:
     enable2_pin = 13
     in1_pin = 27
     in2_pin = 22
-    in3_pin = 18
-    in4_pin = 23
-    in5_pin = 19
-    in6_pin = 26
-    in7_pin = 16
-    in8_pin = 20
+    in3_pin = 23
+    in4_pin = 18
+    in5_pin = 26
+    in6_pin = 19
+    in7_pin = 20
+    in8_pin = 16
 
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
@@ -39,6 +39,10 @@ class car:
         GPIO.output(self.in6_pin, GPIO.LOW)
         GPIO.output(self.in7_pin, GPIO.HIGH)
         GPIO.output(self.in8_pin, GPIO.LOW)
+        if leftSpd >= 88:
+            leftSpd = 88
+        if rightSpd >= 88:
+            rightSpd = 88
         self.pwm1.ChangeDutyCycle(leftSpd)
         self.pwm2.ChangeDutyCycle(rightSpd)
         
@@ -51,6 +55,10 @@ class car:
         GPIO.output(self.in6_pin, GPIO.HIGH)
         GPIO.output(self.in7_pin, GPIO.LOW)
         GPIO.output(self.in8_pin, GPIO.HIGH)
+        if leftSpd >= 88:
+            leftSpd = 88
+        if rightSpd >= 88:
+            rightSpd = 88
         self.pwm1.ChangeDutyCycle(leftSpd)
         self.pwm2.ChangeDutyCycle(rightSpd)
     
@@ -73,6 +81,10 @@ class car:
         GPIO.output(self.in6_pin, GPIO.LOW)
         GPIO.output(self.in7_pin, GPIO.HIGH)
         GPIO.output(self.in8_pin, GPIO.LOW)
+        if leftSpd >= 88:
+            leftSpd = 88
+        if rightSpd >= 88:
+            rightSpd = 88
         self.pwm1.ChangeDutyCycle(leftSpd)
         self.pwm2.ChangeDutyCycle(rightSpd)
 
@@ -85,6 +97,10 @@ class car:
         GPIO.output(self.in6_pin, GPIO.HIGH)
         GPIO.output(self.in7_pin, GPIO.LOW)
         GPIO.output(self.in8_pin, GPIO.HIGH)
+        if leftSpd >= 88:
+            leftSpd = 88
+        if rightSpd >= 88:
+            rightSpd = 88
         self.pwm1.ChangeDutyCycle(leftSpd)
         self.pwm2.ChangeDutyCycle(rightSpd)
 
