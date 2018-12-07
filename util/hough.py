@@ -3,13 +3,13 @@ import numpy as np
 import sys
 
 filename = sys.argv[1]
-img = cv2.imread("test4_"+filename+".jpg")
+img = cv2.imread(filename)
 row, column = img.shape[0], img.shape[1]
 print("row = {}, column = {}".format(row, column))
 
 # intensity equalization
 hsl = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-hsl[:,:,2] = cv2.equalizeHist(hsl[:,:,2])
+#hsl[:,:,2] = cv2.equalizeHist(hsl[:,:,2])
 eq = cv2.cvtColor(hsl, cv2.COLOR_HSV2BGR)
 cv2.imwrite("equal.jpg", eq)
 
@@ -18,7 +18,7 @@ kernel = np.ones((5, 5), np.uint8)
 kernel[0][0] = kernel[4][0] = kernel[0][4] = kernel[4][4] = 0
 vote = 250
 # white and yellow detection
-temp = np.logical_and(eq[:,:,1] > 160, eq[:,:,2] > 160)
+temp = np.logical_and(eq[:,:,1] > 140, eq[:,:,2] > 140)
 
 # yellow color mark
 y_cm = np.logical_and(temp, eq[:,:,0] < 100).astype(np.uint8)
@@ -27,7 +27,7 @@ y_cm = cv2.morphologyEx(cv2.morphologyEx(y_cm, cv2.MORPH_CLOSE, kernel), cv2.MOR
 cv2.imwrite("y_mark.jpg", y_cm*255)
 
 # white color mark
-w_cm = np.logical_and(temp, eq[:,:,0] > 160).astype(np.uint8)
+w_cm = np.logical_and(temp, eq[:,:,0] > 140).astype(np.uint8)
 # close then open
 w_cm = cv2.morphologyEx(cv2.morphologyEx(w_cm, cv2.MORPH_CLOSE, kernel), cv2.MORPH_OPEN, kernel)
 cv2.imwrite("w_mark.jpg", w_cm*255)

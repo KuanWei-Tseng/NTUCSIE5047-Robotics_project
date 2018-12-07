@@ -18,7 +18,7 @@ class rawImage:
         
         # intensity equalization
         hsl = cv2.cvtColor(self._img, cv2.COLOR_BGR2HSV)
-        hsl[:,:,2] = cv2.equalizeHist(hsl[:,:,2])
+        #hsl[:,:,2] = cv2.equalizeHist(hsl[:,:,2])
         eq = cv2.cvtColor(hsl, cv2.COLOR_HSV2BGR)
         
         #cv2.imwrite("equal.jpg", eq)
