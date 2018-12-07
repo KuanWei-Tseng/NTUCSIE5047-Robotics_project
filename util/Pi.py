@@ -11,7 +11,7 @@ class Pi:
     highest level of the classes
     init car object then call the car controlling routine
     """
-    def __init__(self, manual = False, rate = 10):
+    def __init__(self, manual = False, elapse = 0.1):
         self.myCar = car()
         # initialize the camera and grab a reference to the raw camera capture
         self.camera = PiCamera()
@@ -79,19 +79,19 @@ class Pi:
                 event = screen.getch()
                 if event == curses.KEY_UP:
                     screen.addstr(0, 0, "UP")
-                    self.myCar.forward()
+                    self.myCar.forward(40)
 
                 elif event == curses.KEY_DOWN:
                     screen.addstr(0, 0, "DOWN"):
-                    self.myCar.backward()
+                    self.myCar.backward(40)
 
                 elif event == curses.KEY_LEFT:
                     screen.addstr(0, 0, "LEFT")
-                    self.myCar.turnLeft(leftSpd = 0, rightSpd = 100)
+                    self.myCar.turnLeft(leftSpd = 0, rightSpd = 50)
 
                 elif event == curses.KEY_RIGHT:
                     screen.addstr(0, 0, "RIGHT")
-                    self.myCar.turnRight(leftSpd = 100, rightSpd = 0)
+                    self.myCar.turnRight(leftSpd = 50, rightSpd = 0)
                     
                 # nothing is pressed
                 elif event == -1:
@@ -111,5 +111,6 @@ class Pi:
                 curses.endwin()
                 self.myCar.stop()
                 print("END")
+                break
 
         return
