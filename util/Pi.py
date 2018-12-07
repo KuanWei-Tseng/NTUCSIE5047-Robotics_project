@@ -33,7 +33,7 @@ class Pi:
         print("AutoDrive mode started")
         print("Press ENTER to start, press q to exit")
         nothing = raw_input()
-
+        leftSpd = rightSpd = 70
         for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
             try:
                 # get the image
