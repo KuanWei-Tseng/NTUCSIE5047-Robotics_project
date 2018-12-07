@@ -24,7 +24,7 @@ while True:
             break
         screen.clrtoeol()
         screen.refresh()
-        time.sleep(0.5)
+        time.sleep(0.1)
     except Exception as e:
         # No input
         pass
