@@ -110,3 +110,7 @@ class car:
             GPIO.cleanup()
         except RuntimeWarning:
             return True
+
+    def end(self):
+        self.stop()
+        GPIO.cleanup()

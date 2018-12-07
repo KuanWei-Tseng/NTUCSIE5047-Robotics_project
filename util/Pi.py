@@ -113,5 +113,5 @@ class Pi:
         curses.endwin()
         self.myCar.stop()
         print("END")
-
+        self.myCar.end()
         return
