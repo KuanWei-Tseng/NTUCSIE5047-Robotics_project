@@ -74,37 +74,38 @@ class Pi:
         curses.curs_set(0)
         screen.nodelay(True)
         screen.keypad(1)
-        
+        pre_event = 0
         while True:
             try:
                 event = screen.getch()
-                if event == curses.KEY_UP:
-                    screen.addstr(0, 0, "UP")
-                    self.myCar.forward(80, 80)
+                if pre_event != event:
+                    if event == curses.KEY_UP:
+                        screen.addstr(0, 0, "UP")
+                        self.myCar.forward(80, 80)
 
-                elif event == curses.KEY_DOWN:
-                    screen.addstr(0, 0, "DOWN")
-                    self.myCar.backward(80, 80)
+                    elif event == curses.KEY_DOWN:
+                        screen.addstr(0, 0, "DOWN")
+                        self.myCar.backward(80, 80)
 
-                elif event == curses.KEY_LEFT:
-                    screen.addstr(0, 0, "LEFT")
-                    self.myCar.forward(leftSpd = 50, rightSpd = 80)
+                    elif event == curses.KEY_LEFT:
+                        screen.addstr(0, 0, "LEFT")
+                        self.myCar.forward(leftSpd = 50, rightSpd = 80)
 
-                elif event == curses.KEY_RIGHT:
-                    screen.addstr(0, 0, "RIGHT")
-                    self.myCar.forward(leftSpd = 80, rightSpd = 50)
+                    elif event == curses.KEY_RIGHT:
+                        screen.addstr(0, 0, "RIGHT")
+                        self.myCar.forward(leftSpd = 80, rightSpd = 50)
                     
-                # nothing is pressed
-                elif event == -1:
-                    screen.move(0, 0)
-                    self.myCar.stop()
+                    # nothing is pressed
+                    elif event == -1:
+                        screen.move(0, 0)
+                        self.myCar.stop()
 
-                else:
-                    self.myCar.stop()
-                    break
-
-                screen.clrtoeol()
-                screen.refresh()
+                    else:
+                        self.myCar.stop()
+                        break
+                    pre_event = event
+                    screen.clrtoeol()
+                    screen.refresh()
                 time.sleep(0.1)
 
             except Exception as e:
