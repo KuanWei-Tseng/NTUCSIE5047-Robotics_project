@@ -96,9 +96,11 @@ class Pi:
                 # nothing is pressed
                 elif event == -1:
                     screen.move(0, 0)
+                    self.myCar.stop()
 
                 else:
                     self.myCar.stop()
+                    break
 
                 screen.clrtoeol()
                 screen.refresh()
