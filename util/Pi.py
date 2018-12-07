@@ -47,9 +47,9 @@ class Pi:
             
                 # start running
                 if (deviation < 0):
-                    self.myCar.turnLeft(deviation, deviation)
+                    self.myCar.turnLeftSharp(deviation, deviation)
                 elif (deviation > 0):
-                    self.myCar.turnRight(deviation, deviation)
+                    self.myCar.turnRightSharp(deviation, deviation)
 
                 time.sleep(elapse)
             except:
