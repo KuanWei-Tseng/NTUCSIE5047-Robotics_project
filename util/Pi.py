@@ -17,7 +17,7 @@ class Pi:
         self.camera = PiCamera()
         self.camera.rotation = 180
         self.camera.resolution = (640, 480)
-        self.camera.framerate = rate
+        self.camera.framerate = 32
         self.rawCapture = PiRGBArray(self.camera, size=(640, 480))
         # allow the camera to warmup
         time.sleep(0.1)
@@ -68,7 +68,7 @@ class Pi:
         print("press up to go forward\npress down to go backward\npress left to turn left in place\npress right to turn right in place")
         print("press enter to start running")
         useless = raw_input()
-        
+        print(useless)
         screen = curses.initscr()
         curses.noecho()
         curses.curs_set(0)
@@ -80,19 +80,19 @@ class Pi:
                 event = screen.getch()
                 if event == curses.KEY_UP:
                     screen.addstr(0, 0, "UP")
-                    self.myCar.forward(40, 40)
+                    self.myCar.forward(80, 80)
 
                 elif event == curses.KEY_DOWN:
-                    screen.addstr(0, 0, "DOWN"):
-                    self.myCar.backward(40, 40)
+                    screen.addstr(0, 0, "DOWN")
+                    self.myCar.backward(80, 80)
 
                 elif event == curses.KEY_LEFT:
                     screen.addstr(0, 0, "LEFT")
-                    self.myCar.forward(leftSpd = 0, rightSpd = 40)
+                    self.myCar.forward(leftSpd = 50, rightSpd = 80)
 
                 elif event == curses.KEY_RIGHT:
                     screen.addstr(0, 0, "RIGHT")
-                    self.myCar.forward(leftSpd = 40, rightSpd = 0)
+                    self.myCar.forward(leftSpd = 80, rightSpd = 50)
                     
                 # nothing is pressed
                 elif event == -1:
@@ -105,15 +105,13 @@ class Pi:
 
                 screen.clrtoeol()
                 screen.refresh()
-                time.sleep(0.5)
+                time.sleep(0.1)
 
             except Exception as e:
                 pass
 
-            finally:
-                curses.endwin()
-                self.myCar.stop()
-                print("END")
-                break
+        curses.endwin()
+        self.myCar.stop()
+        print("END")
 
         return
