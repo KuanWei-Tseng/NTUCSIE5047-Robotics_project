@@ -114,7 +114,7 @@ class rawImage:
         
         print("y_offset = {}, w_offset = {}".format(y_offset, w_offset))
         """
-        error = 156
+        error = 0
         middle = self._column/2 + error
         deviation = int((w_offset + y_offset)/2) - middle
         """
