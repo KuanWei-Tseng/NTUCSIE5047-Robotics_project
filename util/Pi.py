@@ -79,19 +79,19 @@ class Pi:
                 event = screen.getch()
                 if event == curses.KEY_UP:
                     screen.addstr(0, 0, "UP")
-                    self.myCar.forward(40)
+                    self.myCar.forward(40, 40)
 
                 elif event == curses.KEY_DOWN:
                     screen.addstr(0, 0, "DOWN"):
-                    self.myCar.backward(40)
+                    self.myCar.backward(40, 40)
 
                 elif event == curses.KEY_LEFT:
                     screen.addstr(0, 0, "LEFT")
-                    self.myCar.turnLeft(leftSpd = 0, rightSpd = 50)
+                    self.myCar.forward(leftSpd = 0, rightSpd = 40)
 
                 elif event == curses.KEY_RIGHT:
                     screen.addstr(0, 0, "RIGHT")
-                    self.myCar.turnRight(leftSpd = 50, rightSpd = 0)
+                    self.myCar.forward(leftSpd = 40, rightSpd = 0)
                     
                 # nothing is pressed
                 elif event == -1:
