@@ -36,15 +36,15 @@ def change_rotating_speed(side,speed):
 
 def change_rotating_direction(side,drt):
 	if side == 1:
-		GPIO.out(in1_pin,drt)
-		GPIO.out(in1_pin,not drt)
-		GPIO.out(in3_pin,drt)
-		GPIO.out(in4_pin,not drt)		
+		GPIO.output(in1_pin,drt)
+		GPIO.output(in1_pin,not drt)
+		GPIO.output(in3_pin,drt)
+		GPIO.output(in4_pin,not drt)		
 	else:
-		GPIO.out(in5_pin,drt)
-		GPIO.out(in6_pin,not drt)
-		GPIO.out(in7_pin,drt)
-		GPIO.out(in8_pin,not drt)		
+		GPIO.output(in5_pin,drt)
+		GPIO.output(in6_pin,not drt)
+		GPIO.output(in7_pin,drt)
+		GPIO.output(in8_pin,not drt)		
 
 def goforward(speed):
 	change_rotating_direction(1,True)
@@ -95,7 +95,7 @@ while True:
 		speed = mag*11
 		reversing(speed)
 	else:
-		if len(keyin) < 3 or keyin[2] not in ['+','-']
+		if len(keyin) < 3 or keyin[2] not in ['+','-']:
 			print("Invalid Command. Please input again.\n")
 		drt = int(keyin[1])
 		mag = int(keyin[2])
