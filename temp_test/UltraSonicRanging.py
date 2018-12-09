@@ -31,4 +31,4 @@ def get_distance():
 
 while True:
     print("cm=%f\tinches=%f" % get_distance())
-    time.sleep(1)
+    time.sleep(0.1)

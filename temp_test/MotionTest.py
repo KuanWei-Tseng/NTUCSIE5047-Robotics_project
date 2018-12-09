@@ -7,8 +7,8 @@ in1_pin = 27
 in2_pin = 22
 in3_pin = 18
 in4_pin = 23
-in5_pin = 19
-in6_pin = 26
+in5_pin = 26
+in6_pin = 19
 in7_pin = 16
 in8_pin = 20
 
@@ -32,12 +32,12 @@ def change_rotating_speed(side,speed):
 	if side == 1:
 		pwm1.ChangeDutyCycle(speed)
 	else:
-		pwmt.ChangeDutyCycle(speed)
+		pwm2.ChangeDutyCycle(max(speed-10,0))
 
 def change_rotating_direction(side,drt):
 	if side == 1:
 		GPIO.output(in1_pin,drt)
-		GPIO.output(in1_pin,not drt)
+		GPIO.output(in2_pin,not drt)
 		GPIO.output(in3_pin,drt)
 		GPIO.output(in4_pin,not drt)		
 	else:
