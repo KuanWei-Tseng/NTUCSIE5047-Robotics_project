@@ -95,7 +95,7 @@ while True:
 		speed = mag*11
 		reversing(speed)
 	else:
-		if len(keyin) < 3 || keyin[2] not in ['+','-']
+		if len(keyin) < 3 or keyin[2] not in ['+','-']
 			print("Invalid Command. Please input again.\n")
 		drt = int(keyin[1])
 		mag = int(keyin[2])
