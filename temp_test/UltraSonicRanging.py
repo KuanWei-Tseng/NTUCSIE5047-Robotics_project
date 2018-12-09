@@ -9,9 +9,9 @@ GPIO.setup(trig_pin, GPIO.OUT)
 GPIO.setup(echo_pin, GPIO.IN)
 
 def send_trigger_pulse():
-    GPIO.output(trigger_pin, True)
+    GPIO.output(trig_pin, True)
     time.sleep(0.001)
-    GPIO.output(trigger_pin, False)
+    GPIO.output(trig_pin, False)
 
 def wait_for_echo(value, timeout):
     count = timeout
