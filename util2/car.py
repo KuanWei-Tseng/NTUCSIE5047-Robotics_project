@@ -1,116 +1,107 @@
-import time
 import RPi.GPIO as GPIO
 
 class car:
-    enable1_pin = 17
-    enable2_pin = 13
-    in1_pin = 27
-    in2_pin = 22
-    in3_pin = 23
-    in4_pin = 18
-    in5_pin = 19
-    in6_pin = 26
-    in7_pin = 20
-    in8_pin = 16
+	enable1_pin = 17
+	enable2_pin = 13
+	in1_pin = 27
+	in2_pin = 22
+	in3_pin = 18
+	in4_pin = 23
+	in5_pin = 26
+	in6_pin = 19
+	in7_pin = 16
+	in8_pin = 20
 
-    def __init__(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.enable1_pin, GPIO.OUT)
-        GPIO.setup(self.enable2_pin, GPIO.OUT)
-        GPIO.setup(self.in1_pin, GPIO.OUT)
-        GPIO.setup(self.in2_pin, GPIO.OUT)
-        GPIO.setup(self.in3_pin, GPIO.OUT)
-        GPIO.setup(self.in4_pin, GPIO.OUT)
-        GPIO.setup(self.in5_pin, GPIO.OUT)
-        GPIO.setup(self.in6_pin, GPIO.OUT)
-        GPIO.setup(self.in7_pin, GPIO.OUT)
-        GPIO.setup(self.in8_pin, GPIO.OUT)
-        self.pwm1 = GPIO.PWM(self.enable1_pin, 500)
-        self.pwm2 = GPIO.PWM(self.enable2_pin, 500)
-        self.pwm1.start(0)
-        self.pwm2.start(0)
+	def __init__(self):
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(self.enable1_pin, GPIO.OUT)
+		GPIO.setup(self.enable2_pin, GPIO.OUT)
+		GPIO.setup(self.in1_pin, GPIO.OUT)
+		GPIO.setup(self.in2_pin, GPIO.OUT)
+		GPIO.setup(self.in3_pin, GPIO.OUT)
+		GPIO.setup(self.in4_pin, GPIO.OUT)
+		GPIO.setup(self.in5_pin, GPIO.OUT)
+		GPIO.setup(self.in6_pin, GPIO.OUT)
+		GPIO.setup(self.in7_pin, GPIO.OUT)
+		GPIO.setup(self.in8_pin, GPIO.OUT)
+		self.pwm1 = GPIO.PWM(self.enable1_pin, 500)
+		self.pwm2 = GPIO.PWM(self.enable2_pin, 500)
+		self.pwm1.start(0)
+		self.pwm2.start(0)
 
-    def forward(self, leftSpd = 75, rightSpd = 75):
-        GPIO.output(self.in1_pin, GPIO.HIGH)
-        GPIO.output(self.in2_pin, GPIO.LOW)
-        GPIO.output(self.in3_pin, GPIO.HIGH)
-        GPIO.output(self.in4_pin, GPIO.LOW)
-        GPIO.output(self.in5_pin, GPIO.HIGH)
-        GPIO.output(self.in6_pin, GPIO.LOW)
-        GPIO.output(self.in7_pin, GPIO.HIGH)
-        GPIO.output(self.in8_pin, GPIO.LOW)
-        if leftSpd >= 88:
-            leftSpd = 88
-        if rightSpd >= 88:
-            rightSpd = 88
-        self.pwm1.ChangeDutyCycle(rightSpd)
-        self.pwm2.ChangeDutyCycle(leftSpd)
-        
-    def backward(self, leftSpd = 75, rightSpd = 75):
-        GPIO.output(self.in1_pin, GPIO.LOW)
-        GPIO.output(self.in2_pin, GPIO.HIGH)
-        GPIO.output(self.in3_pin, GPIO.LOW)
-        GPIO.output(self.in4_pin, GPIO.HIGH)
-        GPIO.output(self.in5_pin, GPIO.LOW)
-        GPIO.output(self.in6_pin, GPIO.HIGH)
-        GPIO.output(self.in7_pin, GPIO.LOW)
-        GPIO.output(self.in8_pin, GPIO.HIGH)
-        if leftSpd >= 88:
-            leftSpd = 88
-        if rightSpd >= 88:
-            rightSpd = 88
-        self.pwm1.ChangeDutyCycle(leftSpd)
-        self.pwm2.ChangeDutyCycle(rightSpd)
-    
-    def stop(self):
-        GPIO.output(self.in1_pin, GPIO.LOW)
-        GPIO.output(self.in2_pin, GPIO.LOW)
-        GPIO.output(self.in3_pin, GPIO.LOW)
-        GPIO.output(self.in4_pin, GPIO.LOW)
-        GPIO.output(self.in5_pin, GPIO.LOW)
-        GPIO.output(self.in6_pin, GPIO.LOW)
-        GPIO.output(self.in7_pin, GPIO.LOW)
-        GPIO.output(self.in8_pin, GPIO.LOW)
+	def change_rotating_speed(self, side, speed):
+		if side == 1:
+			self.pwm1.ChangeDutyCycle(speed)
+		else:
+			self.pwm2.ChangeDutyCycle(max(speed-10,0))
 
-    def turnLeftSharp(self, leftSpd = 75, rightSpd = 75):
-        GPIO.output(self.in1_pin, GPIO.LOW)
-        GPIO.output(self.in2_pin, GPIO.HIGH)
-        GPIO.output(self.in3_pin, GPIO.LOW)
-        GPIO.output(self.in4_pin, GPIO.HIGH)
-        GPIO.output(self.in5_pin, GPIO.HIGH)
-        GPIO.output(self.in6_pin, GPIO.LOW)
-        GPIO.output(self.in7_pin, GPIO.HIGH)
-        GPIO.output(self.in8_pin, GPIO.LOW)
-        if leftSpd >= 88:
-            leftSpd = 88
-        if rightSpd >= 88:
-            rightSpd = 88
-        self.pwm1.ChangeDutyCycle(rightSpd)
-        self.pwm2.ChangeDutyCycle(leftSpd)
+	def change_rotating_direction(self, side, drt):
+		if side == 1:
+			GPIO.output(self.in1_pin,drt)
+			GPIO.output(self.in2_pin,not drt)
+			GPIO.output(self.in3_pin,drt)
+			GPIO.output(self.in4_pin,not drt)		
+		else:
+			GPIO.output(self.in5_pin,drt)
+			GPIO.output(self.in6_pin,not drt)
+			GPIO.output(self.in7_pin,drt)
+			GPIO.output(self.in8_pin,not drt)		
+			
+	def goforward(self, speed):
+		self.change_rotating_direction(1,True)
+		self.change_rotating_direction(-1,True)
+		self.change_rotating_speed(1,speed)
+		self.change_rotating_speed(-1,speed)
 
-    def turnRightSharp(self, leftSpd = 75, rightSpd = 75):
-        GPIO.output(self.in1_pin, GPIO.HIGH)
-        GPIO.output(self.in2_pin, GPIO.LOW)
-        GPIO.output(self.in3_pin, GPIO.HIGH)
-        GPIO.output(self.in4_pin, GPIO.LOW)
-        GPIO.output(self.in5_pin, GPIO.LOW)
-        GPIO.output(self.in6_pin, GPIO.HIGH)
-        GPIO.output(self.in7_pin, GPIO.LOW)
-        GPIO.output(self.in8_pin, GPIO.HIGH)
-        if leftSpd >= 88:
-            leftSpd = 88
-        if rightSpd >= 88:
-            rightSpd = 88
-        self.pwm1.ChangeDutyCycle(rightSpd)
-        self.pwm2.ChangeDutyCycle(leftSpd)
+	def reversing(self, speed):
+		self.change_rotating_direction(1,False)
+		self.change_rotating_direction(-1,False)
+		self.change_rotating_speed(1,speed)
+		self.change_rotating_speed(-1,speed)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        try:
-            self.stop()
-            GPIO.cleanup()
-        except RuntimeWarning:
-            return True
+	def fixdeviation(self, speed, devlev):
+		# devlev positive: right deviation / negative: left deviation
+		# devlev(1-5): 5:totally out of control. Emergency Stop.
+		side = devlev/abs(devlev)
+		if abs(devlev) >= 5:
+			self.change_rotating_speed(1,0)
+			self.change_rotating_speed(-1,0)
+			self.pwm2.ChangeDutyCycle(0)
+			print("Stop! Wait for next command. \n")
+		else:
+			if speed < 95-abs(devlev)*10:
+				delta = 10*devlev
+				self.change_rotating_speed(side,delta)
+			else:
+				delta = 10*devlev
+				self.change_rotating_speed(side,speed+delta)
+				self.change_rotating_speed(-side,max(speed-delta,0))
+"""
+speed  = 0
 
-    def end(self):
-        self.stop()
-        GPIO.cleanup()
+while True:
+	cmdlist = ['f','r','c']
+	keyin = input("Input Command:")
+	cmd = keyin[0]
+	if cmd not in cmdlist:
+		print("Invalid Command. Process Killed.\n")
+		GPIO.cleanup()
+		quit()
+	if cmd == "f":
+		mag = int(keyin[1])
+		speed = mag*11
+		goforward(speed)
+	elif cmd == "r":
+		mag = int(keyin[1])
+		speed = mag*11
+		reversing(speed)
+	else:
+		if len(keyin) < 3 or keyin[2] not in ['+','-']:
+			print("Invalid Command. Please input again.\n")
+		drt = int(keyin[1])
+		mag = int(keyin[2])
+		if drt == "+":
+			fixdeviation(speed,mag)
+		else:
+			fixdeviation(speed,-mag)
+"""

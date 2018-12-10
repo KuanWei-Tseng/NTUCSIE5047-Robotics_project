@@ -1,43 +1,115 @@
-from AMSpi import AMSpi
+import RPi.GPIO as GPIO
 
 class car:
-    """
-    car action functions
-    """
+    enable1_pin = 17
+    enable2_pin = 13
+    in1_pin = 27
+    in2_pin = 22
+    in3_pin = 23
+    in4_pin = 18
+    in5_pin = 19
+    in6_pin = 26
+    in7_pin = 20
+    in8_pin = 16
+
     def __init__(self):
-        self.amspi = AMSpi()
-        # Calling AMSpi() we will use default pin numbering: BCM (use GPIO numbers)
-        # if you want to use BOARD numbering do this: "with AMSpi(True) as amspi:"
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.enable1_pin, GPIO.OUT)
+        GPIO.setup(self.enable2_pin, GPIO.OUT)
+        GPIO.setup(self.in1_pin, GPIO.OUT)
+        GPIO.setup(self.in2_pin, GPIO.OUT)
+        GPIO.setup(self.in3_pin, GPIO.OUT)
+        GPIO.setup(self.in4_pin, GPIO.OUT)
+        GPIO.setup(self.in5_pin, GPIO.OUT)
+        GPIO.setup(self.in6_pin, GPIO.OUT)
+        GPIO.setup(self.in7_pin, GPIO.OUT)
+        GPIO.setup(self.in8_pin, GPIO.OUT)
+        self.pwm1 = GPIO.PWM(self.enable1_pin, 500)
+        self.pwm2 = GPIO.PWM(self.enable2_pin, 500)
+        self.pwm1.start(0)
+        self.pwm2.start(0)
 
-        # Set PINs for controlling shift register (GPIO numbering)
-        self.amspi.set_74HC595_pins(21, 20, 16)
-        # Set PINs for controlling all 4 motors (GPIO numbering)
-        self.amspi.set_L293D_pins(5, 6, 13, 19)
-
-    def forward(self, spd = 100):
-        print("GO: clockwise")
-        self.amspi.run_dc_motors([self.amspi.DC_Motor_1, self.amspi.DC_Motor_2], clockwise = False, speed = spd)
-        self.amspi.run_dc_motors([self.amspi.DC_Motor_3, self.amspi.DC_Motor_4], speed = spd)
+    def forward(self, leftSpd = 75, rightSpd = 75):
+        GPIO.output(self.in1_pin, GPIO.HIGH)
+        GPIO.output(self.in2_pin, GPIO.LOW)
+        GPIO.output(self.in3_pin, GPIO.HIGH)
+        GPIO.output(self.in4_pin, GPIO.LOW)
+        GPIO.output(self.in5_pin, GPIO.HIGH)
+        GPIO.output(self.in6_pin, GPIO.LOW)
+        GPIO.output(self.in7_pin, GPIO.HIGH)
+        GPIO.output(self.in8_pin, GPIO.LOW)
+        if leftSpd >= 88:
+            leftSpd = 88
+        if rightSpd >= 88:
+            rightSpd = 88
+        self.pwm1.ChangeDutyCycle(rightSpd)
+        self.pwm2.ChangeDutyCycle(leftSpd)
         
+    def backward(self, leftSpd = 75, rightSpd = 75):
+        GPIO.output(self.in1_pin, GPIO.LOW)
+        GPIO.output(self.in2_pin, GPIO.HIGH)
+        GPIO.output(self.in3_pin, GPIO.LOW)
+        GPIO.output(self.in4_pin, GPIO.HIGH)
+        GPIO.output(self.in5_pin, GPIO.LOW)
+        GPIO.output(self.in6_pin, GPIO.HIGH)
+        GPIO.output(self.in7_pin, GPIO.LOW)
+        GPIO.output(self.in8_pin, GPIO.HIGH)
+        if leftSpd >= 88:
+            leftSpd = 88
+        if rightSpd >= 88:
+            rightSpd = 88
+        self.pwm1.ChangeDutyCycle(leftSpd)
+        self.pwm2.ChangeDutyCycle(rightSpd)
+    
     def stop(self):
-        print("Stop")
-        self.amspi.stop_dc_motors([self.amspi.DC_Motor_1, self.amspi.DC_Motor_2, self.amspi.DC_Motor_3, self.amspi.DC_Motor_4])
+        GPIO.output(self.in1_pin, GPIO.LOW)
+        GPIO.output(self.in2_pin, GPIO.LOW)
+        GPIO.output(self.in3_pin, GPIO.LOW)
+        GPIO.output(self.in4_pin, GPIO.LOW)
+        GPIO.output(self.in5_pin, GPIO.LOW)
+        GPIO.output(self.in6_pin, GPIO.LOW)
+        GPIO.output(self.in7_pin, GPIO.LOW)
+        GPIO.output(self.in8_pin, GPIO.LOW)
 
-    def backward(self, spd = 100):
-        print("GO: counterclockwise")
-        self.amspi.run_dc_motors([self.amspi.DC_Motor_1, self.amspi.DC_Motor_2], speed = spd)
-        self.amspi.run_dc_motors([self.amspi.DC_Motor_3, self.amspi.DC_Motor_4], clockwise = False, speed = spd)
+    def turnLeftSharp(self, leftSpd = 75, rightSpd = 75):
+        GPIO.output(self.in1_pin, GPIO.LOW)
+        GPIO.output(self.in2_pin, GPIO.HIGH)
+        GPIO.output(self.in3_pin, GPIO.LOW)
+        GPIO.output(self.in4_pin, GPIO.HIGH)
+        GPIO.output(self.in5_pin, GPIO.HIGH)
+        GPIO.output(self.in6_pin, GPIO.LOW)
+        GPIO.output(self.in7_pin, GPIO.HIGH)
+        GPIO.output(self.in8_pin, GPIO.LOW)
+        if leftSpd >= 88:
+            leftSpd = 88
+        if rightSpd >= 88:
+            rightSpd = 88
+        self.pwm1.ChangeDutyCycle(rightSpd)
+        self.pwm2.ChangeDutyCycle(leftSpd)
 
-    def turnRight(self, leftSpd = 100, rightSpd = 50):
-        print("Turn right")
-        self.amspi.run_dc_motor(self.amspi.DC_Motor_1, clockwise = False, speed = rightspd)
-        self.amspi.run_dc_motor(self.amspi.DC_Motor_2, clockwise = False, speed = leftspd)
-        self.amspi.run_dc_motor(self.amspi.DC_Motor_3, speed = rightspeed)
-        self.amspi.run_dc_motor(self.amspi.DC_Motor_4, speed = leftSpd)
+    def turnRightSharp(self, leftSpd = 75, rightSpd = 75):
+        GPIO.output(self.in1_pin, GPIO.HIGH)
+        GPIO.output(self.in2_pin, GPIO.LOW)
+        GPIO.output(self.in3_pin, GPIO.HIGH)
+        GPIO.output(self.in4_pin, GPIO.LOW)
+        GPIO.output(self.in5_pin, GPIO.LOW)
+        GPIO.output(self.in6_pin, GPIO.HIGH)
+        GPIO.output(self.in7_pin, GPIO.LOW)
+        GPIO.output(self.in8_pin, GPIO.HIGH)
+        if leftSpd >= 88:
+            leftSpd = 88
+        if rightSpd >= 88:
+            rightSpd = 88
+        self.pwm1.ChangeDutyCycle(rightSpd)
+        self.pwm2.ChangeDutyCycle(leftSpd)
 
-    def turnLeft(self, leftSpd = 50, rightSpd = 100):
-        print("Turn left")
-        self.amspi.run_dc_motor(self.amspi.DC_Motor_1, clockwise = False, speed = rightspd)
-        self.amspi.run_dc_motor(self.amspi.DC_Motor_2, clockwise = False, speed = leftspd)
-        self.amspi.run_dc_motor(self.amspi.DC_Motor_3, speed = rightspeed)
-        self.amspi.run_dc_motor(self.amspi.DC_Motor_4, speed = leftSpd)
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        try:
+            self.stop()
+            GPIO.cleanup()
+        except RuntimeWarning:
+            return True
+
+    def end(self):
+        self.stop()
+        GPIO.cleanup()
