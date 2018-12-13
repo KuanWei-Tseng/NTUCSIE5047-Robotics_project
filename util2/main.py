@@ -1,11 +1,11 @@
-from Pi import Pi
+from core import core
 import sys
 
 def main(type):
     if type == "auto":
-        pipi = Pi()
+        pipi = core()
     else:
-        pipi = Pi(manual = True)
+        pipi = core(manual = True)
     
     return
 
