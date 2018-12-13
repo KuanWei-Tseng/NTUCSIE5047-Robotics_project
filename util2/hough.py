@@ -16,9 +16,9 @@ cv2.imwrite("equal.jpg", eq)
 kernel = np.ones((5, 5), np.uint8)
 # 3-5-5-5-3 octogonal kernel
 kernel[0][0] = kernel[4][0] = kernel[0][4] = kernel[4][4] = 0
-vote = 250
+vote = 200
 # white and yellow detection
-temp = np.logical_and(eq[:,:,1] > 140, eq[:,:,2] > 140)
+temp = np.logical_and(eq[:,:,1] > 100, eq[:,:,2] > 100)
 
 # yellow color mark
 y_cm = np.logical_and(temp, eq[:,:,0] < 100).astype(np.uint8)
@@ -27,7 +27,7 @@ y_cm = cv2.morphologyEx(cv2.morphologyEx(y_cm, cv2.MORPH_CLOSE, kernel), cv2.MOR
 cv2.imwrite("y_mark.jpg", y_cm*255)
 
 # white color mark
-w_cm = np.logical_and(temp, eq[:,:,0] > 140).astype(np.uint8)
+w_cm = np.logical_and(temp, eq[:,:,0] > 100).astype(np.uint8)
 # close then open
 w_cm = cv2.morphologyEx(cv2.morphologyEx(w_cm, cv2.MORPH_CLOSE, kernel), cv2.MORPH_OPEN, kernel)
 cv2.imwrite("w_mark.jpg", w_cm*255)
@@ -129,7 +129,7 @@ cv2.imwrite("road_lines.jpg",img)
 
 print("y_offset = {}, w_offset = {}".format(y_offset, w_offset))
 
-error = 156
+error = 0
 middle = column/2 + error
 deviation = int((w_offset + y_offset)/2) - middle
 print("middle = {}".format(middle))
