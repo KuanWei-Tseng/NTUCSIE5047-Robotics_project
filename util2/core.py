@@ -6,7 +6,7 @@ import curses
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 
-class Pi:
+class core:
     """
     highest level of the classes
     init car object then call the car controlling routine
@@ -52,7 +52,7 @@ class Pi:
                 elif (deviation > 0):
                     self.myCar.turnRightSharp(deviation, deviation)
 
-                time.sleep(elapse)
+                time.sleep(elapse) 
             except:
                 print("error happened")
 
