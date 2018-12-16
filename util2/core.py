@@ -33,7 +33,8 @@ class core:
         print("AutoDrive mode started")
         print("Press ENTER to start, press q to exit")
         nothing = raw_input()
-        leftSpd = rightSpd = 70
+        self.myCar.goforward(7)
+
         for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
             try:
                 # get the image
@@ -45,19 +46,17 @@ class core:
                     break
                 img = rawImage(image)
                 deviation = img.findDeviation()
-            
+                
                 # start running
-                if (deviation < 0):
-                    self.myCar.turnLeftSharp(deviation, deviation)
-                elif (deviation > 0):
-                    self.myCar.turnRightSharp(deviation, deviation)
+                self.myCar.fixdeviation(devlev)
 
                 time.sleep(elapse) 
-            except:
-                print("error happened")
 
-            finally:
+            except Exception:
+                print("error happened")
                 break
+
+
 
         print("ended")
         self.car.stop()
