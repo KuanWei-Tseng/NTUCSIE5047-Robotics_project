@@ -24,7 +24,7 @@ class rawImage:
         #cv2.imwrite("equal.jpg", eq)
 
         # white and yellow detection
-        temp = np.logical_and(eq[:,:,1] > 100, eq[:,:,2] > 100)
+        temp = np.logical_and(eq[:,:,1] > 150, eq[:,:,2] > 150)
 
         # yellow color mark
         y_cm = np.logical_and(temp, eq[:,:,0] < 100).astype(np.uint8)
@@ -34,7 +34,7 @@ class rawImage:
         #cv2.imwrite("y_mark.jpg", y_cm*255)
 
         # white color mark
-        w_cm = np.logical_and(temp, eq[:,:,0] > 100).astype(np.uint8)
+        w_cm = np.logical_and(temp, eq[:,:,0] > 150).astype(np.uint8)
         # close then open
         w_cm = cv2.morphologyEx(cv2.morphologyEx(w_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         #cv2.imwrite("w_mark.jpg", w_cm*255)
@@ -57,9 +57,12 @@ class rawImage:
         # Hough line detection
         y_lines = cv2.HoughLines(y_inter, 1, np.pi/180, self._vote)
         w_lines = cv2.HoughLines(w_inter, 1, np.pi/180, self._vote)
-
+        if w_lines is None or y_lines is None:
+                print('f*ck!')
+                return 0
+                
         # find the rightmost yellow line
-        y_rho, y_theta, y_offset = 0, 0, -float("inf")
+        y_rho, y_theta, y_offset = 0, 0, -float(1000)
 
         for rho, theta in y_lines[:, 0]:
             # ignore horizontal lines
@@ -70,7 +73,7 @@ class rawImage:
                     y_rho, y_theta, y_offset = rho, theta, offset
 
         # find the leftmost white line
-        w_rho, w_theta, w_offset = 0, 0, float("inf")
+        w_rho, w_theta, w_offset = 0, 0, float(1000)
 
         for rho, theta in w_lines[:, 0]:
             # ignore horizontal lines
@@ -79,7 +82,7 @@ class rawImage:
                 offset = int(np.cos(theta)*rho-np.tan(theta)*(self._row-np.sin(theta)*rho))
                 if offset > y_offset and offset < w_offset:
                     w_rho, w_theta, w_offset = rho, theta, offset
-        """
+        
         # draw line
         a = np.cos(y_theta)
         b = np.sin(y_theta)
@@ -113,7 +116,7 @@ class rawImage:
         cv2.imwrite("road_lines.jpg",self._img)
         
         print("y_offset = {}, w_offset = {}".format(y_offset, w_offset))
-        """
+        
         error = -11
         middle = self._column/2 + error
         deviation = middle - int((w_offset + y_offset)/2)

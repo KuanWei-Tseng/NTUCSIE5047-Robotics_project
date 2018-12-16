@@ -18,16 +18,16 @@ kernel = np.ones((5, 5), np.uint8)
 kernel[0][0] = kernel[4][0] = kernel[0][4] = kernel[4][4] = 0
 vote = 200
 # white and yellow detection
-temp = np.logical_and(eq[:,:,1] > 100, eq[:,:,2] > 100)
-
+temp = np.logical_and(eq[:,:,1] > 150, eq[:,:,2] > 150)
+temp1 = np.logical_and(eq[:,:,1] > 100, eq[:,:,2] > 100)
 # yellow color mark
-y_cm = np.logical_and(temp, eq[:,:,0] < 100).astype(np.uint8)
+y_cm = np.logical_and(temp1, eq[:,:,0] < 100).astype(np.uint8)
 # close then open
 y_cm = cv2.morphologyEx(cv2.morphologyEx(y_cm, cv2.MORPH_CLOSE, kernel), cv2.MORPH_OPEN, kernel)
 cv2.imwrite("y_mark.jpg", y_cm*255)
 
 # white color mark
-w_cm = np.logical_and(temp, eq[:,:,0] > 100).astype(np.uint8)
+w_cm = np.logical_and(temp, eq[:,:,0] > 150).astype(np.uint8)
 # close then open
 w_cm = cv2.morphologyEx(cv2.morphologyEx(w_cm, cv2.MORPH_CLOSE, kernel), cv2.MORPH_OPEN, kernel)
 cv2.imwrite("w_mark.jpg", w_cm*255)
@@ -74,7 +74,7 @@ for rho, theta in y_lines[:, 0]:
             y_rho, y_theta, y_offset = rho, theta, offset
 
 # find the leftmost white line
-w_rho, w_theta, w_offset = 0, 0, float("inf")
+w_rho, w_theta, w_offset = 0, 0, float("1000")
 
 for rho, theta in w_lines[:, 0]:
     # ignore horizontal lines

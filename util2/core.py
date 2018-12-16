@@ -3,6 +3,7 @@ from rawImage import rawImage
 import numpy as np
 import time
 import curses
+import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 
@@ -11,7 +12,7 @@ class core:
     highest level of the classes
     init car object then call the car controlling routine
     """
-    def __init__(self, manual = False, elapse = 0.1):
+    def __init__(self, manual = False, elapse = 0.3):
         self.myCar = car()
         # initialize the camera and grab a reference to the raw camera capture
         self.camera = PiCamera()
@@ -20,7 +21,7 @@ class core:
         self.camera.framerate = 32
         self.rawCapture = PiRGBArray(self.camera, size=(640, 480))
         # allow the camera to warmup
-        time.sleep(0.1)
+        time.sleep(2)
 
         # manual controll
         if manual:
@@ -32,13 +33,14 @@ class core:
     def autoDrive(self, elapse):
         print("AutoDrive mode started")
         print("Press ENTER to start, press q to exit")
-        nothing = raw_input()
+        nothing = input()
         self.myCar.goforward(7)
 
         for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
             try:
                 # get the image
-                image = frame.array()
+                image = frame.array
+                cv2.imshow("photo",image)
                 key = cv2.waitKey(1) & 0xFF
                 # clear the stream in preparation for the next frame
                 self.rawCapture.truncate(0)
@@ -46,24 +48,23 @@ class core:
                     break
                 img = rawImage(image)
                 deviation = img.findDeviation()
+                print(deviation)
                 if abs(deviation)>30:
-                        devlev = (deviation/abs(deviation))*(deviation//30)
+                        devlev = (deviation/abs(deviation))*(deviation//40)
                 else:
                         devlev = 0
-                
+                print(devlev)
                 # start running
                 self.myCar.fixdeviation(devlev)
 
                 time.sleep(elapse) 
-
-            except Exception:
+            except KeyboardInterrupt:
                 print("error happened")
+                self.myCar.turnoff()
                 break
-
-
-
+                
         print("ended")
-        self.car.stop()
+        self.myCar.stop()
 
         return
 

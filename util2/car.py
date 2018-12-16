@@ -36,10 +36,10 @@ class car:
 	def change_rotating_speed(self, side, speed):
 		if side == 1:
 			self.Rspd = speed
-			self.pwm1.ChangeDutyCycle(speed*11)
+			self.pwm1.ChangeDutyCycle(min(speed*11,100))
 		else:
 			self.Lspd = speed
-			self.pwm2.ChangeDutyCycle(max(speed*11-10,0))
+			self.pwm2.ChangeDutyCycle(max(speed*11,0))
 
 	def change_rotating_direction(self, side, drt):
 		if side == 1:
@@ -82,6 +82,7 @@ class car:
 		# go forward
 		if devlev == 0:
 			self.goforward(self.Lspd)
+			return
 
 		# side > 0: should go left
 		# side < 0: should go right
@@ -90,7 +91,7 @@ class car:
 		if abs(devlev) >= 5:
 			self.change_rotating_speed(1,0)
 			self.change_rotating_speed(-1,0)
-			self.pwm1.changeDutyCycle(0)
+			self.pwm1.ChangeDutyCycle(0)
 			self.pwm2.ChangeDutyCycle(0)
 			print("Stop! Wait for next command. \n")
 
@@ -109,7 +110,7 @@ class car:
 		self.change_rotating_speed(1, 0)
 		self.change_rotating_speed(-1, 0)
 		
-	def exit(self):
+	def turnoff(self):
 		self.stop()
 		GPIO.cleanup()
 		quit()
