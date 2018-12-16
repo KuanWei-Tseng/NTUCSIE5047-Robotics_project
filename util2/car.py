@@ -13,6 +13,10 @@ class car:
 	in8_pin = 20
 
 	def __init__(self):
+		self.Lspd = 0
+		self.Rspd = 0
+		self.Ldrt = True
+		self.Rdrt = True
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(self.enable1_pin, GPIO.OUT)
 		GPIO.setup(self.enable2_pin, GPIO.OUT)
@@ -31,51 +35,84 @@ class car:
 
 	def change_rotating_speed(self, side, speed):
 		if side == 1:
-			self.pwm1.ChangeDutyCycle(speed)
+			self.Rspd = speed
+			self.pwm1.ChangeDutyCycle(speed*11)
 		else:
-			self.pwm2.ChangeDutyCycle(max(speed-10,0))
+			self.Lspd = speed
+			self.pwm2.ChangeDutyCycle(max(speed*11-10,0))
 
 	def change_rotating_direction(self, side, drt):
 		if side == 1:
+			self.Rdrt = drt
 			GPIO.output(self.in1_pin,drt)
 			GPIO.output(self.in2_pin,not drt)
 			GPIO.output(self.in3_pin,drt)
 			GPIO.output(self.in4_pin,not drt)		
 		else:
+			self.Ldrt = drt
 			GPIO.output(self.in5_pin,drt)
 			GPIO.output(self.in6_pin,not drt)
 			GPIO.output(self.in7_pin,drt)
 			GPIO.output(self.in8_pin,not drt)		
 			
 	def goforward(self, speed):
+		self.Lspd = speed
+		self.Rspd = speed
+		self.Ldrt = True
+		self.Rdrt = True
 		self.change_rotating_direction(1,True)
 		self.change_rotating_direction(-1,True)
 		self.change_rotating_speed(1,speed)
 		self.change_rotating_speed(-1,speed)
 
 	def reversing(self, speed):
+		self.Lspd = speed
+		self.Rspd = speed
+		self.Ldrt = False
+		self.Rdrt = False
 		self.change_rotating_direction(1,False)
 		self.change_rotating_direction(-1,False)
 		self.change_rotating_speed(1,speed)
 		self.change_rotating_speed(-1,speed)
 
-	def fixdeviation(self, speed, devlev):
+	def fixdeviation(self, devlev):
 		# devlev positive: right deviation / negative: left deviation
 		# devlev(1-5): 5:totally out of control. Emergency Stop.
+
+		# go forward
+		if devlev == 0:
+			self.goforward(self.Lspd)
+
+		# side > 0: should go left
+		# side < 0: should go right
 		side = devlev/abs(devlev)
+
 		if abs(devlev) >= 5:
 			self.change_rotating_speed(1,0)
 			self.change_rotating_speed(-1,0)
 			self.pwm2.ChangeDutyCycle(0)
 			print("Stop! Wait for next command. \n")
+
+		if side > 0:
+			a = self.Rspd
+			b = self.Lspd
 		else:
-			if speed < 95-abs(devlev)*10:
-				delta = 10*devlev
-				self.change_rotating_speed(side,delta)
-			else:
-				delta = 10*devlev
-				self.change_rotating_speed(side,speed+delta)
-				self.change_rotating_speed(-side,max(speed-delta,0))
+			a = self.Lspd
+			b = self.Rspd
+
+		else if (abs(devlev) == 1 and a <= b) or (abs(devlev) >= 2 and abs(devlev) <= 4):
+			self.change_rotating_speed(side,max(a+abs(devlev), 9))
+			self.change_rotating_speed(-side,min(b-abs(devlev), 0))
+
+	def stop(self):
+		self.change_rotating_speed(1, 0)
+		self.change_rotating_speed(-1, 0)
+		
+	def exit(self):
+		self.stop()
+		GPIO.cleanup()
+		quit()
+
 """
 speed  = 0
 
