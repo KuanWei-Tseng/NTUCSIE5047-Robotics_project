@@ -90,6 +90,7 @@ class car:
 		if abs(devlev) >= 5:
 			self.change_rotating_speed(1,0)
 			self.change_rotating_speed(-1,0)
+			self.pwm1.changeDutyCycle(0)
 			self.pwm2.ChangeDutyCycle(0)
 			print("Stop! Wait for next command. \n")
 
@@ -100,7 +101,7 @@ class car:
 			a = self.Lspd
 			b = self.Rspd
 
-		else if (abs(devlev) == 1 and a <= b) or (abs(devlev) >= 2 and abs(devlev) <= 4):
+		if (abs(devlev) == 1 and a <= b) or (abs(devlev) >= 2 and abs(devlev) <= 4):
 			self.change_rotating_speed(side,max(a+abs(devlev), 9))
 			self.change_rotating_speed(-side,min(b-abs(devlev), 0))
 
