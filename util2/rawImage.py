@@ -7,7 +7,7 @@ class rawImage:
     """
     # 3-5-5-5-3 octogonal kernel
     _kernel = np.array([[0,1,1,1,0],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[0,1,1,1,0]]).astype(np.uint8)
-    _vote = 250
+    _vote = 200
 
     def __init__(self, img):
         self._row, self._column = img.shape[0], img.shape[1]
@@ -24,17 +24,17 @@ class rawImage:
         #cv2.imwrite("equal.jpg", eq)
 
         # white and yellow detection
-        temp = np.logical_and(eq[:,:,1] > 140, eq[:,:,2] > 140)
+        temp = np.logical_and(eq[:,:,1] > 100, eq[:,:,2] > 100)
 
         # yellow color mark
-        y_cm = np.logical_and(temp, eq[:,:,0] < 140).astype(np.uint8)
+        y_cm = np.logical_and(temp, eq[:,:,0] < 100).astype(np.uint8)
         # close then open
         y_cm = cv2.morphologyEx(cv2.morphologyEx(y_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
 
         #cv2.imwrite("y_mark.jpg", y_cm*255)
 
         # white color mark
-        w_cm = np.logical_and(temp, eq[:,:,0] > 140).astype(np.uint8)
+        w_cm = np.logical_and(temp, eq[:,:,0] > 100).astype(np.uint8)
         # close then open
         w_cm = cv2.morphologyEx(cv2.morphologyEx(w_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         #cv2.imwrite("w_mark.jpg", w_cm*255)
