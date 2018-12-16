@@ -46,6 +46,10 @@ class core:
                     break
                 img = rawImage(image)
                 deviation = img.findDeviation()
+                if abs(deviation)>30:
+                        devlev = (deviation/abs(deviation))*(deviation//30)
+                else:
+                        devlev = 0
                 
                 # start running
                 self.myCar.fixdeviation(devlev)
