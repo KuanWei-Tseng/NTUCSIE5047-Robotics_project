@@ -116,15 +116,15 @@ class rawImage:
         """
         error = 0
         middle = self._column/2 + error
-        deviation = int((w_offset + y_offset)/2) - middle
+        deviation = middle - int((w_offset + y_offset)/2)
         """
         print("middle = {}".format(middle))
         print("deviation = {}".format(deviation))
 
         if deviation > 0:
-            print("should go right {} pixels".format(deviation))
+            print("should go left {} pixels".format(deviation))
         elif deviation < 0:
-            print("should go left {} pixels".format(-deviation))
+            print("should go right {} pixels".format(-deviation))
         else:
             print("should go straight")
         """
