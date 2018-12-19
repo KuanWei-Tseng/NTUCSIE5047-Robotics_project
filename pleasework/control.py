@@ -32,6 +32,5 @@ def fix(rightSpd, leftSpd, dev, y, w):
         rightSpd = 0
         leftSpd = 0
 
-    print("rightSpd = {}, leftSpd = {}".format(rightSpd, leftSpd))
     return rightSpd, leftSpd
         
