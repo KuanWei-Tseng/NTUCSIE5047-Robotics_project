@@ -65,7 +65,7 @@ class car:
 		drt = False -> backward
 		"""
 		# invalid direction
-		if drt != True or drt != False:
+		if drt != True and drt != False:
 			print("drt is {}, should be True or False".format(drt))
 
 		# set right direction
@@ -85,7 +85,7 @@ class car:
 			
 	def forward(self, speed):
 		"""
-		go forward with speed
+		go forward with spd = speed
 		"""
 		self.change_rotating_direction(1,True)
 		self.change_rotating_direction(-1,True)
@@ -94,7 +94,7 @@ class car:
 
 	def backward(self, speed):
 		"""
-		go backward with speed
+		go backward with spd = speed
 		"""
 		self.change_rotating_direction(1,False)
 		self.change_rotating_direction(-1,False)
@@ -107,6 +107,8 @@ class car:
 		"""
 		self.change_rotating_speed(1, 0)
 		self.change_rotating_speed(-1, 0)
+		self.change_rotating_direction(1, True)
+		self.change_rotating_direction(-1. True)
 
 	def setSpeed(self, rightSpd, leftSpd):
 		"""
@@ -126,11 +128,11 @@ class car:
 		# left reversing
 		if leftSpd < 0:
 			self.change_rotating_direction(-1, False)
-			self.change_rotating_speed(1, -leftSpd)
+			self.change_rotating_speed(-1, -leftSpd)
 		# left forwarding
 		else:
-			self.change_rotating_direction(1, True)
-			self.change_rotating_speed(1, rightSpd)
+			self.change_rotating_direction(-1, True)
+			self.change_rotating_speed(-1, leftSpd)
 	
 	def getSpeed(self):
 		"""
@@ -139,13 +141,13 @@ class car:
 		rightSpd, leftSpd = self.Rspd, self.Lspd
 		# right reversing
 		if self.Rdrt == False:
-			rightSpd = -Rspd
+			rightSpd = -self.Rspd
 
 		# left reversing
 		if self.Ldrt == False:
-			leftSpd = -Lspd
+			leftSpd = -self.Lspd
 		
-		return Rspd, Lspd
+		return rightSpd, leftSpd
 
 	def fixdeviation(self, devlev):
 		# devlev positive: right deviation / negative: left deviation
@@ -185,33 +187,3 @@ class car:
 		self.stop()
 		GPIO.cleanup()
 		quit()
-
-"""
-speed  = 0
-
-while True:
-	cmdlist = ['f','r','c']
-	keyin = input("Input Command:")
-	cmd = keyin[0]
-	if cmd not in cmdlist:
-		print("Invalid Command. Process Killed.\n")
-		GPIO.cleanup()
-		quit()
-	if cmd == "f":
-		mag = int(keyin[1])
-		speed = mag*11
-		goforward(speed)
-	elif cmd == "r":
-		mag = int(keyin[1])
-		speed = mag*11
-		reversing(speed)
-	else:
-		if len(keyin) < 3 or keyin[2] not in ['+','-']:
-			print("Invalid Command. Please input again.\n")
-		drt = int(keyin[1])
-		mag = int(keyin[2])
-		if drt == "+":
-			fixdeviation(speed,mag)
-		else:
-			fixdeviation(speed,-mag)
-"""

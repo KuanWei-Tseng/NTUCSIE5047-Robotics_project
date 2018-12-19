@@ -12,7 +12,7 @@ class camera:
     def capture(self):
         # grab an image from the camera
         self.camera.capture(self.rawCapture, format="bgr")
-        return = rawCapture.array
+        return rawCapture.array
 
     def exit(self):
         self.camera.close()

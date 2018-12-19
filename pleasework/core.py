@@ -43,12 +43,25 @@ class core:
                 raw = rawImage(img)
                 # get the deviation
                 deviation, y, w = raw.findDeviation()
+
+                print("deviation = {}, y = {}, w = {}".format(deviation, y, w))
+
                 # get current speed
                 rightSpd, leftSpd = self.myCar.getSpeed()
+
+                print("current rightSpd = {}".format(rightSpd))
+                print("current leftSpd = {}".format(leftSpd))
+
                 # calculate new rightSpd and leftSpd to fix the deviation
                 rightSpd, leftSpd = control.fix(rightSpd, leftSpd, deviation, y, w)
+
+                print("new rightSpd = {}".format(rightSpd))
+                print("new leftSpd = {}".format(leftSpd))
+
                 # pass speed arguments to myCar
                 self.myCar.setSpeed(rightSpd, leftSpd)
+
+                time.sleep(elapse)
 
             except KeyboardInterrupt:
                 print("keyboard interrupt signal caught, exit")
