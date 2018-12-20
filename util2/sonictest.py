@@ -1,7 +1,7 @@
 from ultrasonic import ultrasonic
+from obws import obws
 import time
 
-sonic = ultrasonic()
-while True:
-	sonic.measure()
-	time.sleep(0.1)
+sonic = obws()
+sonic.safedriving()
+

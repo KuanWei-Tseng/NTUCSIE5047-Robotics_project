@@ -29,14 +29,16 @@ class ultrasonic:
 		counter = countout
 		while GPIO.input(self.echo_pin) == True and counter > 0:
         		counter = counter-1
-		ReceiveTime = time.time()
-		range = (ReceiveTime - StartTime)*(331+0.6*self.temperature)*100/2
-		return range
+		return StartTime
 
 	def measure(self):
 		self.send_trigger()
-		range = self.receive_echo()
-		print("Distance = %f cm\n" %range)
+		StartTime = self.receive_echo()
+		ReceiveTime = time.time()
+		distance = (ReceiveTime - StartTime)*(331+0.6*self.temperature)*100/2
+		# print("Distance = %f cm\n" %distance)
+		return distance
+
 
 
 	
