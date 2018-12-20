@@ -33,7 +33,8 @@ class ultrasonic:
 	def measure():
 		send_trigger()
 		range = receive_echo()
-		print("Distance = %f cm" %range)
+		print("Distance = %f cm\n" %range)
+
 
 	
 
