@@ -2,6 +2,7 @@ from car import car
 from camera import camera
 from rawImage import rawImage
 import control
+import vars
 import numpy as np
 import time
 import cv2
@@ -13,7 +14,9 @@ class core:
         self.myCar = car()
         # initialize camera
         self.myCamera = camera()
-        
+        # initialize global variables
+        vars.init()
+
         # get ready
         time.sleep(2)
         
@@ -33,7 +36,7 @@ class core:
         print("autoDrive activated")
         
         # start going forward
-        self.myCar.goforward(5)
+        self.myCar.goforward(50)
         
         while True:
             try:
@@ -66,6 +69,7 @@ class core:
             except KeyboardInterrupt:
                 print("keyboard interrupt signal caught, exit")
                 self.myCar.turnoff()
+                self.myCamera.exit()
                 break
 
         return

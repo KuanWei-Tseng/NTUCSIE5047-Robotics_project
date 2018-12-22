@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import vars
 
 class rawImage:
     """
@@ -19,7 +20,7 @@ class rawImage:
         row, column = self._row/2, self._column
         # using only the lower half of the image
         img = np.copy(self._img[int(self._row/2):int(self._row), :])
-        cv2.imwrite("../result/half.jpg", img)
+        #cv2.imwrite("../result/half.jpg", img)
 
         # yellow color mark (B < 140, G > 100, R > 100)
         y_cm = np.logical_and(np.logical_and(img[:,:,0] < 140, img[:,:,1] > 100), img[:,:,2] > 100).astype(np.uint8)
@@ -27,7 +28,7 @@ class rawImage:
         y_cm = cv2.morphologyEx(cv2.morphologyEx(y_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         # dilate
         y_cm = cv2.dilate(y_cm, self._kernel, iterations = 1)
-        cv2.imwrite("../result/y_mark.jpg", y_cm*255)
+        #cv2.imwrite("../result/y_mark.jpg", y_cm*255)
 
         # white color mark (B > 150, G > 150, R > 150)
         w_cm = np.logical_and(np.logical_and(img[:,:,0] > 150, img[:,:,1] > 150), img[:,:,2] > 150).astype(np.uint8)
@@ -35,22 +36,22 @@ class rawImage:
         w_cm = cv2.morphologyEx(cv2.morphologyEx(w_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         # dilate
         w_cm = cv2.dilate(w_cm, self._kernel, iterations = 1)
-        cv2.imwrite("../result/w_mark.jpg", w_cm*255)
+        #cv2.imwrite("../result/w_mark.jpg", w_cm*255)
 
         # gray scale canny edge detection
         gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (5, 5), 0)
         edges = cv2.Canny(blur,50,150,apertureSize = 3)
 
-        cv2.imwrite("../result/canny.jpg", edges)
+        #cv2.imwrite("../result/canny.jpg", edges)
 
         # intersection of canny and road markings
         y_inter = (edges * y_cm > 0).astype(np.uint8)
         w_inter = (edges * w_cm > 0).astype(np.uint8)
         y_inter = cv2.dilate(y_inter, self._kernel, iterations = 1)
         w_inter = cv2.dilate(w_inter, self._kernel, iterations = 1)
-        cv2.imwrite("../result/y_inter.jpg", y_inter*255)
-        cv2.imwrite("../result/w_inter.jpg", w_inter*255)
+        #cv2.imwrite("../result/y_inter.jpg", y_inter*255)
+        #cv2.imwrite("../result/w_inter.jpg", w_inter*255)
 
         # Hough line detection
         y_lines = cv2.HoughLines(y_inter, 1, np.pi/180, self._vote)
