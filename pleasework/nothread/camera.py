@@ -12,7 +12,11 @@ class camera:
     def capture(self):
         # grab an image from the camera
         self.camera.capture(self.rawCapture, format="bgr")
-        return rawCapture.array
+        return self.rawCapture.array
+    
+    def trunc(self):
+        # truncate the stream
+        self.rawCapture.truncate(0)
 
     def exit(self):
         self.camera.close()

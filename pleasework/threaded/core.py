@@ -6,6 +6,7 @@ import vars
 import numpy as np
 import time
 import cv2
+import threading
 
 class core:
     
@@ -36,7 +37,7 @@ class core:
         print("autoDrive activated")
         
         # start going forward
-        self.myCar.goforward(50)
+        self.myCar.forward(50)
         
         while True:
             try:
@@ -44,10 +45,17 @@ class core:
                 img = self.myCamera.capture()
                 # init rawImage
                 raw = rawImage(img)
-                # get the deviation
-                deviation, y, w = raw.findDeviation()
-
-                print("deviation = {}, y = {}, w = {}".format(deviation, y, w))
+                # truncate stream
+                self.myCamera.trunc()
+                # init thread
+                t1 = threading.Thread(target = raw.findDeviation(), args = ())
+                # start thread, get the deviation
+                t1.start()
+                # wait elapsed time
+                time.sleep(elapse)
+                # join thread, get the deviation
+                t1.join()
+                print("deviation = {}, y = {}, w = {}".format(vars.deviation, vars.y, vars.w))
 
                 # get current speed
                 rightSpd, leftSpd = self.myCar.getSpeed()
@@ -56,7 +64,7 @@ class core:
                 print("current leftSpd = {}".format(leftSpd))
 
                 # calculate new rightSpd and leftSpd to fix the deviation
-                rightSpd, leftSpd = control.fix(rightSpd, leftSpd, deviation, y, w)
+                rightSpd, leftSpd = control.fix(rightSpd, leftSpd, vars.deviation, vars.y, vars.w)
 
                 print("new rightSpd = {}".format(rightSpd))
                 print("new leftSpd = {}".format(leftSpd))

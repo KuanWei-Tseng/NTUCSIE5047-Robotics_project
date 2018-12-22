@@ -108,7 +108,7 @@ class car:
 		self.change_rotating_speed(1, 0)
 		self.change_rotating_speed(-1, 0)
 		self.change_rotating_direction(1, True)
-		self.change_rotating_direction(-1. True)
+		self.change_rotating_direction(-1, True)
 
 	def setSpeed(self, rightSpd, leftSpd):
 		"""
