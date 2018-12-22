@@ -29,7 +29,7 @@ class core:
             print("manualDrive mode")
             self.manualDrive()
 
-    def autoDrive(self, elapse = 0.5):
+    def autoDrive(self, elapse = 0.2):
         print("autoDrive activated")
         
         # start going forward
