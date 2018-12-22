@@ -13,10 +13,11 @@ class obws:
 
 	def __init__(self):
 		self.sonic = ultrasonic()
+		print("Hello~Are you OK????")
 
 	def safedriving(self):
-		while True:
-			try:
+		while not vars.shutdown:
+
 				dist1 = self.sonic.measure()
 				#print("distance: %f"%dist1)
 				if dist1 < 30:
@@ -40,9 +41,7 @@ class obws:
 				#self.sendmesseage(message)
 				self.dist = dist1
 				time.sleep(0.1)
-			except KeyboardInterrupt:
-				#print("Process Aborted!")
-				quit()
+		print("ended")
 
 	def sendmesseage(self,message):
 		mesdic = {

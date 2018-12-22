@@ -6,12 +6,12 @@ def fix(rightSpd, leftSpd, dev, y, w):
         # both line found, dev is the deviation
         if dev > 10:
             # should go left
-            rightSpd = 70
-            leftSpd = 10
+            rightSpd = 80
+            leftSpd = 20
         elif dev < -10:
             # should go right
-            rightSpd = 10
-            leftSpd = 70
+            rightSpd = 20
+            leftSpd = 80
         else:
             # go straight
             rightSpd = 50
@@ -21,8 +21,8 @@ def fix(rightSpd, leftSpd, dev, y, w):
         # only found yellow line, dev is y offset
         if dev > 10:
             # should go right
-            rightSpd = 10
-            leftSpd = 70
+            rightSpd = 20
+            leftSpd = 80
         else:
             # go straight
             rightSpd = 50

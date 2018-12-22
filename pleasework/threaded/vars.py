@@ -6,3 +6,4 @@ def init():
     global y
     global w
     global message
+    global shutdown

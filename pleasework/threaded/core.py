@@ -16,8 +16,6 @@ class core:
         self.myCar = car()
         # initialize camera
         self.myCamera = camera()
-        # initialize obws
-        self.myObws = obws()
         # initialize global variables
         vars.init()
 
@@ -39,8 +37,15 @@ class core:
     def autoDrive(self, elapse = 0.2):
         print("autoDrive activated")
 
+
+        # initialize obws
+        myObws = obws()
+        # enable radar
+        vars.shutdown = False
         # start up radar
-        t_obws = threadind.Thread(target = self.myObws.safedriving(), args = ())
+        t_obws = threading.Thread(target = myObws.safedriving, args = ())
+        print("started")
+        t_obws.start()
         # start going forward
         self.myCar.forward(50)
         
@@ -53,7 +58,7 @@ class core:
                 # truncate stream
                 self.myCamera.trunc()
                 # init thread
-                t1 = threading.Thread(target = raw.findDeviation(), args = ())
+                t1 = threading.Thread(target = raw.findDeviation, args = ())
                 # start thread, get the deviation
                 t1.start()
                 # wait elapsed time
@@ -69,6 +74,7 @@ class core:
                 print("current leftSpd = {}".format(leftSpd))
 
                 # running into obstacles
+                #vars.message = 2
                 if vars.message == 0:
                     # stop
                     print("Running into obstacles, stop")
@@ -87,8 +93,10 @@ class core:
 
             except KeyboardInterrupt:
                 print("keyboard interrupt signal caught, exit")
+                vars.shutdown = True
                 self.myCar.turnoff()
                 self.myCamera.exit()
+                t_obws.join()
                 break
 
         return
