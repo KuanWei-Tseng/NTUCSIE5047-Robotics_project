@@ -47,7 +47,6 @@ class core:
                 raw = rawImage(img)
                 # init thread
                 t1 = threading.Thread(target = raw.findDeviation(), args = ())
-                threads.append(t1)
                 # start thread, get the deviation
                 t1.start()
                 # wait elapsed time
