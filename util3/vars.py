@@ -2,6 +2,7 @@
 init the global variables
 """
 def init():
-    global deviaiton
+    global dev
+    global int_dev
     global y
     global w

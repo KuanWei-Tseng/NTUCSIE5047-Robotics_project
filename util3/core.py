@@ -1,7 +1,8 @@
 from car import car
 from camera import camera
 from rawImage import rawImage
-import control
+import lanePID
+import steering
 import vars
 import numpy as np
 import time
@@ -36,7 +37,7 @@ class core:
         print("autoDrive activated")
         
         # start going forward
-        self.myCar.forward(50)
+        self.myCar.setSpeed(50,50)
         
         while True:
             try:
@@ -58,7 +59,7 @@ class core:
                 print("current leftSpd = {}".format(leftSpd))
 
                 # calculate new rightSpd and leftSpd to fix the deviation
-                rightSpd, leftSpd = control.fix(rightSpd, leftSpd, deviation, y, w)
+                rightSpd, leftSpd = lanePID.fix(rightSpd, leftSpd, deviation, y, w)
 
                 print("new rightSpd = {}".format(rightSpd))
                 print("new leftSpd = {}".format(leftSpd))
@@ -78,3 +79,38 @@ class core:
 
     def manualDrive(self):
         pass
+
+    def motionTest(self):
+        cmdlist = ['f','b','L','R']
+        while True:
+            try:
+                keyin = input("Input Command:")
+                cmd = keyin[0]
+                if cmd not in cmdlist:
+                    print("Invalid Command. Process Killed.\n")
+                    self.myCar.turnoff()
+                    break
+                if cmd == "f":
+                    mag = int(keyin[1])*10
+                    self.myCar.setSpeed(mag,mag)
+                elif cmd == "b":
+                    mag = (-1)*int(keyin[1])*10
+                    self.myCar.setSpeed(mag,mag)
+                elif cmd == "L":
+                    rightSpd, leftSpd = self.myCar.getSpeed()
+                    centSpd = (rightSpd+leftSpd)/2
+                    rightSpd, leftSpd = steering.steering(-1,centSpd)
+                    self.myCar.setSpeed(rightSpd, leftSpd)
+                else:
+                    rightSpd, leftSpd = self.myCar.getSpeed()
+                    centSpd = (rightSpd+leftSpd)/2
+                    rightSpd, leftSpd = steering.steering(1,centSpd)
+                    self.myCar.setSpeed(rightSpd, leftSpd)                  
+
+            except KeyboardInterrupt:
+                print("keyboard interrupt signal caught, exit")
+                self.myCar.turnoff()
+                self.myCamera.exit()
+                break
+
+        return

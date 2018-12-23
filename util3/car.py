@@ -83,24 +83,6 @@ class car:
 			GPIO.output(self.in7_pin,drt)
 			GPIO.output(self.in8_pin,not drt)		
 			
-	def forward(self, speed):
-		"""
-		go forward with spd = speed
-		"""
-		self.change_rotating_direction(1,True)
-		self.change_rotating_direction(-1,True)
-		self.change_rotating_speed(1,speed)
-		self.change_rotating_speed(-1,speed)
-
-	def backward(self, speed):
-		"""
-		go backward with spd = speed
-		"""
-		self.change_rotating_direction(1,False)
-		self.change_rotating_direction(-1,False)
-		self.change_rotating_speed(1,speed)
-		self.change_rotating_speed(-1,speed)
-
 	def stop(self):
 		"""
 		stop the car
@@ -148,37 +130,6 @@ class car:
 			leftSpd = -self.Lspd
 		
 		return rightSpd, leftSpd
-
-	def fixdeviation(self, devlev):
-		# devlev positive: right deviation / negative: left deviation
-		# devlev(1-5): 5:totally out of control. Emergency Stop.
-
-		# go forward
-		if devlev == 0:
-			self.goforward(self.Lspd)
-			return
-
-		# side > 0: should go left
-		# side < 0: should go right
-		side = devlev/abs(devlev)
-
-		if abs(devlev) >= 5:
-			self.change_rotating_speed(1,0)
-			self.change_rotating_speed(-1,0)
-			self.pwm1.ChangeDutyCycle(0)
-			self.pwm2.ChangeDutyCycle(0)
-			print("Stop! Wait for next command. \n")
-
-		if side > 0:
-			a = self.Rspd
-			b = self.Lspd
-		else:
-			a = self.Lspd
-			b = self.Rspd
-
-		if (abs(devlev) == 1 and a <= b) or (abs(devlev) >= 2 and abs(devlev) <= 4):
-			self.change_rotating_speed(side,max(a+abs(devlev), 9))
-			self.change_rotating_speed(-side,min(b-abs(devlev), 0))
 
 	def turnoff(self):
 		"""
