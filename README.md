@@ -2,7 +2,7 @@
 Github of Term project in robotic course (CSIE5047) at National Taiwan University.
 
 ARCUV is now capable of:
-(1) lane detection and following with vision sensors.\\
+(1) lane detection and following with vision sensors.  
 (2) Obstacle detection and avoidance with ultrasonic sensors.
 
 3D cad model of our robot car:
