@@ -8,4 +8,5 @@ manual controll code is in Pi.py waiting to be tested.
 Arduino motor shield(L293D) is unstable under Raspberry Pi envirioment. Abort using ready-made shield.
 Use two **L293D IC** instead. (New Control code: L293D.py)
 
+![Alt text](https://github.com/juichiehchang/NTUCSIE5047-Robotics_project/blob/master/Final.png)
 
