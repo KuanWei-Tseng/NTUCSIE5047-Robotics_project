@@ -1,2 +1,4 @@
 # ignore ~ files
 *~
+.DS_Store
+__pycache__
