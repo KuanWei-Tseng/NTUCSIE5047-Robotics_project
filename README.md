@@ -1,4 +1,4 @@
-# ARCUV (Autonomous Robot Car based on Ultrasonic and Vision sensors )
+# ARCUV (Autonomous Robot Car based on Ultrasonic and Visual sensors )
 Github of Term project in robotic course (CSIE5047) at National Taiwan University.
 
 ARCUV is now capable of:  
