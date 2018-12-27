@@ -4,7 +4,7 @@ import cv2
 f = open("dev.txt", "w")
 
 for j in range(1, 6):
-    img = cv2.imread("../test1_" + str(j) + ".jpg")
+    img = cv2.imread("../test/test1_" + str(j) + ".jpg")
     raw = rawImage(img)
     dev, y, w = raw.findDeviation()
     f.write("1_" + str(j) + ":\n")
@@ -24,7 +24,7 @@ for j in range(1, 6):
 
 for i in range(2, 5):
     for j in range(1, 11):
-        img = cv2.imread("../test" + str(i) + "_" + str(j) + ".jpg")
+        img = cv2.imread("../test/test" + str(i) + "_" + str(j) + ".jpg")
         raw = rawImage(img)
         dev, y, w = raw.findDeviation()
         f.write(str(i) + "_" + str(j) + ":\n")

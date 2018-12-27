@@ -2,7 +2,7 @@ from rawImage import rawImage
 import cv2
 import sys
 
-img = cv2.imread("../test" + str(sys.argv[1]) + "_" + str(sys.argv[2]) + ".jpg")
+img = cv2.imread("../" + str(sys.argv[1]) + ".jpg")
 raw = rawImage(img)
 dev, y, w = raw.findDeviation()
 print("dev = " + str(dev) + "\n")

@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from expand import expand
 
 class rawImage:
     """
@@ -7,7 +8,7 @@ class rawImage:
     """
     # 3x3 kernel
     _kernel = np.ones((3,3), np.uint8)
-    _vote = 200
+    _vote = 150
 
     def __init__(self, img):
         self._row, self._column = img.shape[0], img.shape[1]
@@ -16,13 +17,17 @@ class rawImage:
     # returns the course deviation in pixel count
     def findDeviation(self):
 
-        row, column = self._row/2, self._column
+        row, column = int(self._row/2), self._column
         # using only the lower half of the image
         img = np.copy(self._img[int(self._row/2):int(self._row), :])
         cv2.imwrite("../result/half.jpg", img)
 
-        # yellow color mark (B < 140, G > 100, R > 100)
-        y_cm = np.logical_and(np.logical_and(img[:,:,0] < 140, img[:,:,1] > 100), img[:,:,2] > 100).astype(np.uint8)
+        # expand the image
+        #img = expand(img)
+        #cv2.imwrite("../result/expanded.jpg", img)
+
+        # yellow color mark (B < 80, G > 100, R > 100)
+        y_cm = np.logical_and(np.logical_and(img[:,:,0] < 80, img[:,:,1] > 100), img[:,:,2] > 100).astype(np.uint8)
         # close then open
         y_cm = cv2.morphologyEx(cv2.morphologyEx(y_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         # dilate
@@ -30,7 +35,7 @@ class rawImage:
         cv2.imwrite("../result/y_mark.jpg", y_cm*255)
 
         # white color mark (B > 150, G > 150, R > 150)
-        w_cm = np.logical_and(np.logical_and(img[:,:,0] > 150, img[:,:,1] > 150), img[:,:,2] > 150).astype(np.uint8)
+        w_cm = np.logical_and(np.logical_and(img[:,:,0] > 120, img[:,:,1] > 120), img[:,:,2] > 120).astype(np.uint8)
         # close then open
         w_cm = cv2.morphologyEx(cv2.morphologyEx(w_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         # dilate
@@ -94,7 +99,7 @@ class rawImage:
             #print("w_offset is too big")
             return y_offset, 1, 0
 
-        """
+        
         # draw line
         a = np.cos(y_theta)
         b = np.sin(y_theta)
@@ -125,13 +130,22 @@ class rawImage:
         if w_offset < self._column:
             cv2.circle(img,(int(w_offset),int(self._row)),7,(255,255,255),5)
 
-        cv2.imwrite("road_lines.jpg",self._img)
+        cv2.imwrite("../result/road_lines.jpg",img)
         
         print("y_offset = {}, w_offset = {}".format(y_offset, w_offset))
-        """
+        
         error = 0
         middle = column/2 + error
         deviation = middle - int((w_offset + y_offset)/2)
+        topy = int(np.cos(y_theta)*y_rho-np.tan(y_theta)*(-np.sin(y_theta)*y_rho))
+        topw = int(np.cos(w_theta)*w_rho-np.tan(w_theta)*(-np.sin(w_theta)*w_rho))
+        cv2.circle(img,(int(y_offset),int(row)),7,(0,255,255),5)
+        cv2.circle(img,(int(w_offset),int(row)),7,(0,255,255),5)
+        cv2.circle(img,(int(topy),int(0)),7,(0,255,255),5)
+        cv2.circle(img,(int(topw),int(0)),7,(0,255,255),5)
+        cv2.imwrite("../result/dots.jpg", img)
+        print("topy = {}, topw = {}".format(topy, topw))
+        print("y_offset = {}, w_offset = {}".format(y_offset, w_offset))
         """
         print("middle = {}".format(middle))
         print("deviation = {}".format(deviation))
