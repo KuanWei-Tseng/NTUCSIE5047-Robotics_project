@@ -65,7 +65,21 @@ class core:
                 time.sleep(elapse)
                 # join thread, get the deviation
                 t1.join()
-                print("deviation = {}, y = {}, w = {}".format(vars.deviation, vars.y, vars.w))
+
+                if vars.type == "b":
+                    # both lines found
+                    print("both lines found")
+                    print("deviation = {}".format(vars.deviation))
+
+                elif vars.type == "y":
+                    # only found yellow line
+                    print("yellow line found")
+                    print("y_theta = {}, y_offset = {}".format(vars.theta, vars.deviation))
+
+                elif vars.type == "w":
+                    # only found white line
+                    print("white line found")
+                    print("w_theta = {}, w_offset = {}".format(vars.theta, vars.deviation))
 
                 # get current speed
                 rightSpd, leftSpd = self.myCar.getSpeed()
@@ -74,14 +88,13 @@ class core:
                 print("current leftSpd = {}".format(leftSpd))
 
                 # running into obstacles
-                #vars.message = 2
                 if vars.message == 0:
                     # stop
                     print("Running into obstacles, stop")
                     rightSpd, leftSpd = 0, 0
                 else:
                     # calculate new rightSpd and leftSpd to fix the deviation
-                    rightSpd, leftSpd = control.fix(rightSpd, leftSpd, vars.deviation, vars.y, vars.w)
+                    rightSpd, leftSpd = control.fix(rightSpd, leftSpd, vars.deviation, vars.theta, vars.type)
 
                 print("new rightSpd = {}".format(rightSpd))
                 print("new leftSpd = {}".format(leftSpd))
