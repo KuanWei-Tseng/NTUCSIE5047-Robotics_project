@@ -103,9 +103,8 @@ myCamera = camera()
 while True:
     try:
         # get the image from camera
-		cap_img = myCamera.capture()
-		img = rawImage(cap_img)
-		myCamera.trunc()
+        img = myCamera.capture()
+        myCamera.trunc()
         row,column = img.shape[0], img.shape[1]
         image = np.zeros((int(row/2),int(column))).astype(np.uint8)
         image = img[0:int(row/2),int(0):column]
@@ -144,6 +143,8 @@ while True:
 			        c = c.astype("float")
 			        c = c.astype("int")
 			        cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
-
         cv2.imshow("traffic_light", image)
-
+    except KeyboardInterrupt:
+        print("keyboard interrupt signal caught, exit")
+        self.myCamera.exit()
+    break
