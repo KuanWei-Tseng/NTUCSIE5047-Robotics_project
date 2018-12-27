@@ -165,17 +165,17 @@ class rawImage:
             error = 0
             middle = column/2 + error
             deviation = middle - int((w_offset + y_offset)/2)
+            """
             topy = int(np.cos(y_theta)*y_rho-np.tan(y_theta)*(-np.sin(y_theta)*y_rho))
             topw = int(np.cos(w_theta)*w_rho-np.tan(w_theta)*(-np.sin(w_theta)*w_rho))
-            """
             cv2.circle(img,(int(y_offset),int(row)),7,(0,255,255),5)
             cv2.circle(img,(int(w_offset),int(row)),7,(0,255,255),5)
             cv2.circle(img,(int(topy),int(0)),7,(0,255,255),5)
             cv2.circle(img,(int(topw),int(0)),7,(0,255,255),5)
             cv2.imwrite("../result/dots.jpg", img)
+            print("topy = {}, topw = {}".format(topy, topw))
+            print("y_offset = {}, w_offset = {}".format(y_offset, w_offset))
             """
-            #print("topy = {}, topw = {}".format(topy, topw))
-            #print("y_offset = {}, w_offset = {}".format(y_offset, w_offset))
             vars.theta, vars.deviation, vars.type = y_theta, deviation, "b"
             return
 
