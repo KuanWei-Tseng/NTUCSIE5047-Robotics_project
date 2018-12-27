@@ -1,20 +1,9 @@
 import numpy as np
 import cv2
-from scipy.ndimage.measurements import label
-'''from pyimagesearch.shapedetector import ShapeDetector'''
-from skimage import measure
-import argparse
-import imutils
 import copy
+from camera import camera
+from rawImage import rawImage
 
-'''row, column = img.shape[0], img.shape[1]
-output = np.zeros([row, column]).astype(np.uint8)
-kernel = np.ones((11,11),np.uint8)
-img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-tophat = cv2.morphologyEx(img, cv2.MORPH_TOPHAT, kernel)
-cv2.imwrite("tflight.jpg",tophat)
-structure = np.ones((3,3),dtype=np.int)
-labeled, ncomponents = label(tophat, structure)'''
 def grab_contours(cnts):
     # if the length the contours tuple returned by cv2.findContours
     # is '2' then we are using either OpenCV v2.4, v4-beta, or
@@ -106,48 +95,55 @@ def light_detector(sub_img):
 	
 
 
-img = cv2.imread("test4_7.jpg")
-row,column = img.shape[0], img.shape[1]
-image = np.zeros((int(row/2),int(column))).astype(np.uint8)
-image = img[0:int(row/2),int(0):column]
-image_buff = copy.deepcopy(image)
+#filename = sys.argv[1]
+#img = cv2.imread("test4_7.jpg")
+myCar = car()
+myCamera = camera()
 
-# convert the resized image to grayscale, blur it slightly,
-# and threshold it			
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-thresh = cv2.threshold(blurred, 100, 255, cv2.cv2.THRESH_BINARY_INV)[1]
+while True:
+    try:
+        # get the image from camera
+		cap_img = myCamera.capture()
+		img = rawImage(cap_img)
+		myCamera.trunc()
+        row,column = img.shape[0], img.shape[1]
+        image = np.zeros((int(row/2),int(column))).astype(np.uint8)
+        image = img[0:int(row/2),int(0):column]
+        image_buff = copy.copy(image)
+        # convert the resized image to grayscale, blur it slightly,
+        # and threshold it			
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+        thresh = cv2.threshold(blurred, 100, 255, cv2.cv2.THRESH_BINARY_INV)[1]
 
-# find contours in the thresholded image and initialize the
-# shape detector
-cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
-	cv2.CHAIN_APPROX_SIMPLE)
-cnts = grab_contours(cnts)
+        # find contours in the thresholded image and initialize the
+        # shape detector
+        cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
+	    cv2.CHAIN_APPROX_SIMPLE)
+        cnts = grab_contours(cnts)
 
-sd = ShapeDetector()
-# loop over the contours
-for c in cnts:
-	# compute the center of the contour, then detect the name of the
-	# shape using only the contour
-	shape = sd.detect(c)
-	area = cv2.contourArea(c)
-	if shape == "rectangle" and area >= 500 and area <=5000:
-		(x, y, w, h) = cv2.boundingRect(c)
-		sub_img = np.zeros((int(h),int(w))).astype(np.uint8)
-		sub_img = image_buff[y:y+h, x:x+w]
-		check_black = np.zeros((int(h),int(w))).astype(np.uint8)
-		check_black = np.logical_and(sub_img[:,:,0] < 70, np.logical_and(sub_img[:,:,1] < 70 ,sub_img[:,:,2] < 70))
-		black_count = check_black.sum()
-		black_ratio = black_count / (h*w)
-		#print(black_ratio)
-		if black_ratio > 0.4:
-			signal_light = light_detector(sub_img)
-			print(signal_light)
-			c = c.astype("float")
-			c = c.astype("int")
-			cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
+        sd = ShapeDetector()
+        # loop over the contours
+        for c in cnts:
+	    # compute the center of the contour, then detect the name of the
+	    # shape using only the contour
+	        shape = sd.detect(c)
+	        area = cv2.contourArea(c)
+	        if shape == "rectangle" and area >= 500 and area <=5000:
+		        (x, y, w, h) = cv2.boundingRect(c)
+		        sub_img = np.zeros((int(h),int(w))).astype(np.uint8)
+		        sub_img = image_buff[y:y+h, x:x+w]
+		        check_black = np.zeros((int(h),int(w))).astype(np.uint8)
+		        check_black = np.logical_and(sub_img[:,:,0] < 70, np.logical_and(sub_img[:,:,1] < 70 ,sub_img[:,:,2] < 70))
+		        black_count = check_black.sum()
+		        black_ratio = black_count / (h*w)
+		        #print(black_ratio)
+		        if black_ratio > 0.4:
+			        signal_light = light_detector(sub_img)
+			        print(signal_light)
+			        c = c.astype("float")
+			        c = c.astype("int")
+			        cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 
- 
-# show the output image
-cv2.imwrite("Image.jpg", image)
+        cv2.imshow("traffic_light", image)
 
