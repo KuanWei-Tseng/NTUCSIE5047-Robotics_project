@@ -47,7 +47,7 @@ class core:
         print("started")
         t_obws.start()
         # start going forward
-        self.myCar.forward(50)
+        self.myCar.setSpeed(50, 50)
         
         while True:
             try:

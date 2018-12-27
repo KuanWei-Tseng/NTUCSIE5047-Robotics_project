@@ -83,15 +83,6 @@ class car:
 			GPIO.output(self.in7_pin,drt)
 			GPIO.output(self.in8_pin,not drt)		
 			
-	def forward(self, speed):
-		"""
-		go forward with spd = speed
-		"""
-		self.change_rotating_direction(1,True)
-		self.change_rotating_direction(-1,True)
-		self.change_rotating_speed(1,speed)
-		self.change_rotating_speed(-1,speed)
-
 	def backward(self, speed):
 		"""
 		go backward with spd = speed
