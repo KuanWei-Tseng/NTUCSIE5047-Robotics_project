@@ -2,8 +2,8 @@
 init the global variables
 """
 def init():
+    global theta
     global deviation
-    global y
-    global w
+    global type
     global message
     global shutdown
