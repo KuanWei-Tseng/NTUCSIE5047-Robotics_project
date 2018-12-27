@@ -144,6 +144,7 @@ while True:
 			        c = c.astype("int")
 			        cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
         cv2.imshow("traffic_light", image)
+        cv2.destroyAllWindows()
     except KeyboardInterrupt:
         print("keyboard interrupt signal caught, exit")
         self.myCamera.exit()
