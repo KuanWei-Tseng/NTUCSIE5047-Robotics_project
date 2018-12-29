@@ -2,7 +2,7 @@ from car import car
 from camera import camera
 from rawImage import rawImage
 from obws import obws
-import control
+from control import control
 import vars
 import numpy as np
 import time
@@ -38,8 +38,8 @@ class core:
 
     def autoDrive(self, elapse = 0.2):
         print("autoDrive activated")
-
-
+        # initialize control 
+        myCtl = control()
         # initialize obws
         myObws = obws()
         # enable radar
@@ -98,7 +98,7 @@ class core:
                     rightSpd, leftSpd = 0, 0
                 else:
                     # calculate new rightSpd and leftSpd to fix the deviation
-                    rightSpd, leftSpd = control.fix(rightSpd, leftSpd, vars.deviation, vars.theta, vars.type)
+                    rightSpd, leftSpd = myCtl.adaptive_control(rightSpd, leftSpd, vars.deviation, vars.theta, vars.type)
 
                 print("new rightSpd = {}".format(rightSpd))
                 print("new leftSpd = {}".format(leftSpd))
