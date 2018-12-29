@@ -114,7 +114,7 @@ while True:
         # and threshold it			
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-        thresh = cv2.threshold(blurred, 80, 255, cv2.cv2.THRESH_BINARY_INV)[1]
+        thresh = cv2.threshold(blurred,225,255,cv2.THRESH_BINARY)[1]
 
         # find contours in the thresholded image and initialize the
         # shape detector
@@ -129,7 +129,7 @@ while True:
             up = max(0, y-15)
             down = min(int(3*row/7),y+15)
             left = max(0, x-15)
-            right = min(int(3*column/7),x+15)
+            right = min(int(2*column/3),x+15)
             sub_img = image_buff[up:down, left:right]
             signal_light = light_detector(sub_img)
             print(signal_light)
