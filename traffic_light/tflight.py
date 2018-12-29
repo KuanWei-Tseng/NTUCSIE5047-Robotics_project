@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 import copy
 from camera import camera
-from rawImage import rawImage
 
 def grab_contours(cnts):
     # if the length the contours tuple returned by cv2.findContours
@@ -97,7 +96,7 @@ def light_detector(sub_img):
 
 #filename = sys.argv[1]
 #img = cv2.imread("test4_7.jpg")
-myCar = car()
+
 myCamera = camera()
 i = 0
 while True:
@@ -106,8 +105,8 @@ while True:
         img = myCamera.capture()
         myCamera.trunc()
         row,column = img.shape[0], img.shape[1]
-        image = np.zeros((int(row/2),int(column))).astype(np.uint8)
-        image = img[0:int(row/2),int(0):column]
+        image = np.zeros((int(3*row/7),(int(column)-int(column/3)))).astype(np.uint8)
+        image = img[0:int(3*row/7),int(column/3):column]
         image_buff = copy.copy(image)
         # convert the resized image to grayscale, blur it slightly,
         # and threshold it			
@@ -128,7 +127,7 @@ while True:
 	        shape = sd.detect(c)
 	        area = cv2.contourArea(c)
             
-	        if shape == "rectangle" and area >= 500 and area <=5000:
+	        if shape == "rectangle" and area >= 600 and area <=5000:
 		        (x, y, w, h) = cv2.boundingRect(c)
 		        sub_img = np.zeros((int(h),int(w))).astype(np.uint8)
 		        sub_img = image_buff[y:y+h, x:x+w]
