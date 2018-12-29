@@ -112,7 +112,7 @@ while True:
         # and threshold it			
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-        thresh = cv2.threshold(blurred, 100, 255, cv2.cv2.THRESH_BINARY_INV)[1]
+        thresh = cv2.threshold(blurred, 80, 255, cv2.cv2.THRESH_BINARY_INV)[1]
 
         # find contours in the thresholded image and initialize the
         # shape detector
@@ -127,7 +127,7 @@ while True:
 	        shape = sd.detect(c)
 	        area = cv2.contourArea(c)
             
-	        if shape == "rectangle" and area >= 600 and area <=5000:
+	        if shape == "rectangle" and area >= 600 and area <=7500:
 		        (x, y, w, h) = cv2.boundingRect(c)
 		        sub_img = np.zeros((int(h),int(w))).astype(np.uint8)
 		        sub_img = image_buff[y:y+h, x:x+w]
