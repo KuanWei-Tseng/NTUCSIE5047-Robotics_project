@@ -99,7 +99,7 @@ def light_detector(sub_img):
 #img = cv2.imread("test4_7.jpg")
 myCar = car()
 myCamera = camera()
-
+i = 0
 while True:
     try:
         # get the image from camera
@@ -120,7 +120,6 @@ while True:
         cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
 	    cv2.CHAIN_APPROX_SIMPLE)
         cnts = grab_contours(cnts)
-
         sd = ShapeDetector()
         # loop over the contours
         for c in cnts:
@@ -128,6 +127,7 @@ while True:
 	    # shape using only the contour
 	        shape = sd.detect(c)
 	        area = cv2.contourArea(c)
+            
 	        if shape == "rectangle" and area >= 500 and area <=5000:
 		        (x, y, w, h) = cv2.boundingRect(c)
 		        sub_img = np.zeros((int(h),int(w))).astype(np.uint8)
@@ -143,9 +143,10 @@ while True:
 			        c = c.astype("float")
 			        c = c.astype("int")
 			        cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
-        cv2.imshow("traffic_light", image)
-        cv2.destroyAllWindows()
+        #cv2.imshow("traffic_light", image)
+        cv2.imwrite('traffic_light'+str(i)+'.jpg',image)
     except KeyboardInterrupt:
         print("keyboard interrupt signal caught, exit")
         self.myCamera.exit()
     break
+    i = i + 1
