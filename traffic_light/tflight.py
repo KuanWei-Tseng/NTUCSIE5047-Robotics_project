@@ -147,6 +147,6 @@ while True:
         cv2.imwrite('traffic_light'+str(i)+'.jpg',image)
     except KeyboardInterrupt:
         print("keyboard interrupt signal caught, exit")
-        self.myCamera.exit()
+        myCamera.exit()
     break
     i = i + 1
