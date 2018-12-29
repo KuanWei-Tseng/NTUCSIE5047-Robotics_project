@@ -11,15 +11,15 @@ import threading
 
 class core:
     
-    def __init__(self, auto = True):
+    def __init__(self, auto = True, debug):
         # initialize car object
         self.myCar = car()
         # initialize camera
         self.myCamera = camera()
-        # open file to write data
-        self.fo = open("~/Desktop/data.csv", "w")
         # initialize global variables
         vars.init()
+        # debug or not
+        self.debug = debug
 
         # get ready
         time.sleep(2)
@@ -68,26 +68,22 @@ class core:
                 time.sleep(elapse)
                 # join thread, get the deviation
                 t1.join()
-
-                counter += 1
-                self.fo.write(str(counter) + ", ")
+                
+                print("================================")
                 if vars.type == "b":
                     # both lines found
                     print("both lines found")
                     print("deviation = {}".format(vars.deviation))
-                    self.fo.write("1, 1, " + str(vars.deviation) + ", ")
 
                 elif vars.type == "y":
                     # only found yellow line
                     print("yellow line found")
                     print("y_theta = {}, y_offset = {}".format(vars.theta, vars.deviation))
-                    self.fo.write("1, 0, " + str(vars.deviation) + ", ")
 
                 elif vars.type == "w":
                     # only found white line
                     print("white line found")
                     print("w_theta = {}, w_offset = {}".format(vars.theta, vars.deviation))
-                    self.fo.write("0, 1, " + str(vars.deviation) + ", ")
 
                 # get current speed
                 rightSpd, leftSpd = self.myCar.getSpeed()
@@ -106,10 +102,10 @@ class core:
 
                 print("new rightSpd = {}".format(rightSpd))
                 print("new leftSpd = {}".format(leftSpd))
-                self.fo.write(str(leftSpd) + ", " + str(rightSpd) + "\n")
 
                 # pass speed arguments to myCar
-                self.myCar.setSpeed(rightSpd, leftSpd)
+                if self.debug == "False":
+                    self.myCar.setSpeed(rightSpd, leftSpd)
 
                 time.sleep(elapse)
 
