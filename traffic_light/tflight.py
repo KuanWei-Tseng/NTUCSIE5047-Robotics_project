@@ -66,28 +66,30 @@ class ShapeDetector:
 
 def light_detector(sub_img):
 	img_hsv = cv2.cvtColor(sub_img, cv2.COLOR_RGB2HSV)
-	green_mask_upper = np.array([70, 255, 255])
-	green_mask_lower = np.array([36, 0, 0])
+	green_mask_upper = np.array([110, 255, 255])
+	green_mask_lower = np.array([80, 0, 0])
 	green_mask = cv2.inRange(img_hsv, green_mask_lower, green_mask_upper)
 	
 	percentage_green = np.count_nonzero(green_mask) / (sub_img.shape[0]*sub_img.shape[1])
+	#print("green:")
 	#print(percentage_green)
-	if percentage_green > 0.15:
+	if percentage_green > 0.3:
 		return "green"
 		
-	red_mask_upper = np.array([0, 70, 50])
-	red_mask_lower = np.array([10, 255, 255])
+	red_mask_upper = np.array([30, 255, 255])
+	red_mask_lower = np.array([0, 0, 0])
 	red_mask1 = cv2.inRange(img_hsv, red_mask_lower, red_mask_upper)
 
-	red_mask_upper = np.array([170, 70, 50])
-	red_mask_lower = np.array([180, 255, 255])
+	red_mask_upper = np.array([140, 255, 255])
+	red_mask_lower = np.array([110, 0, 0])
 	red_mask2 = cv2.inRange(img_hsv, red_mask_lower, red_mask_upper)
 	
 	red_mask = red_mask1 + red_mask2
 	percentage_red = np.count_nonzero(red_mask) / (sub_img.shape[0]*sub_img.shape[1])
+	#print("red:")
 	#print(percentage_red)
 
-	if percentage_red > 0.15:
+	if percentage_red > 0.3:
 		return "red"
 		
 	return "no light"
@@ -119,33 +121,20 @@ while True:
         cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
 	    cv2.CHAIN_APPROX_SIMPLE)
         cnts = grab_contours(cnts)
-        sd = ShapeDetector()
+
         # loop over the contours
         for c in cnts:
-	    # compute the center of the contour, then detect the name of the
-	    # shape using only the contour
-	        shape = sd.detect(c)
-	        area = cv2.contourArea(c)
-            
-	        if shape == "rectangle" and area >= 600 and area <=7500:
-		        (x, y, w, h) = cv2.boundingRect(c)
-		        sub_img = np.zeros((int(h),int(w))).astype(np.uint8)
-		        sub_img = image_buff[y:y+h, x:x+w]
-		        check_black = np.zeros((int(h),int(w))).astype(np.uint8)
-		        check_black = np.logical_and(sub_img[:,:,0] < 70, np.logical_and(sub_img[:,:,1] < 70 ,sub_img[:,:,2] < 70))
-		        black_count = check_black.sum()
-		        black_ratio = black_count / (h*w)
-		        #print(black_ratio)
-		        if black_ratio > 0.4:
-			        signal_light = light_detector(sub_img)
-			        print(signal_light)
-			        c = c.astype("float")
-			        c = c.astype("int")
-			        cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
-        #cv2.imshow("traffic_light", image)
-        cv2.imwrite('traffic_light'+str(i)+'.jpg',image)
-    except KeyboardInterrupt:
-        print("keyboard interrupt signal caught, exit")
-        myCamera.exit()
-    break
-    i = i + 1
+            (x, y, w, h) = cv2.boundingRect(c)
+            sub_img = np.zeros((int(h),int(w))).astype(np.uint8)
+            up = max(0, y-15)
+            down = min(int(3*row/7),y+15)
+            left = max(0, x-15)
+            right = min(int(3*column/7),x+15)
+            sub_img = image_buff[up:down, left:right]
+            signal_light = light_detector(sub_img)
+            print(signal_light)
+            c = c.astype("float")
+            c = c.astype("int")
+            cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
+            cv2.imwrite(str(i)+'.jpg',sub_img)
+        i = i+1
