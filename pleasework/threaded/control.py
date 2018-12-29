@@ -4,11 +4,11 @@ def fix(rightSpd, leftSpd, dev, theta, type):
     """
     if type == "b":
         # both line found, dev is the deviation
-        if dev > 10:
+        if dev > 20:
             # should go left
             rightSpd = 80
             leftSpd = 20
-        elif dev < -10:
+        elif dev < -20:
             # should go right
             rightSpd = 20
             leftSpd = 80
@@ -21,8 +21,8 @@ def fix(rightSpd, leftSpd, dev, theta, type):
         # only found yellow line, dev is y_offset
         if dev > 10:
             # should go right
-            rightSpd = 0
-            leftSpd = 80
+            rightSpd = 40
+            leftSpd = 90
         else:
             # go straight
             rightSpd = 50
@@ -32,8 +32,8 @@ def fix(rightSpd, leftSpd, dev, theta, type):
         # only found white line, dev is w_offset
         if dev < 650:
             # should go left
-            rightSpd = 80
-            leftSpd = 0
+            rightSpd = 90
+            leftSpd = 40
         else:
             # go straight
             rightSpd = 50
