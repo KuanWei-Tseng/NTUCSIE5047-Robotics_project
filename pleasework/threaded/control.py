@@ -21,7 +21,7 @@ def fix(rightSpd, leftSpd, dev, theta, type):
         # only found yellow line, dev is y_offset
         if dev > 10:
             # should go right
-            rightSpd = -20
+            rightSpd = 0
             leftSpd = 80
         else:
             # go straight
@@ -30,10 +30,10 @@ def fix(rightSpd, leftSpd, dev, theta, type):
 
     elif type == "w":
         # only found white line, dev is w_offset
-        if dev < 600:
+        if dev < 650:
             # should go left
             rightSpd = 80
-            leftSpd = -20
+            leftSpd = 0
         else:
             # go straight
             rightSpd = 50
