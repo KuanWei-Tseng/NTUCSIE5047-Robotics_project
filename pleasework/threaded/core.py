@@ -12,7 +12,7 @@ import threading
 
 class core:
     
-    def __init__(self, auto = True, debug):
+    def __init__(self, auto, debug):
         # initialize car object
         self.myCar = car()
         # initialize camera
@@ -50,7 +50,8 @@ class core:
         print("started")
         t_obws.start()
         # start going forward
-        self.myCar.setSpeed(50, 50)
+        if self.debug == "False":
+            self.myCar.setSpeed(50, 50)
         counter = 0
 
         while True:
@@ -87,10 +88,10 @@ class core:
                 print("================================")
                 if vars.blue == True:
                     # check traffic light
-                    if vars.light = "green":
+                    if vars.light == "green":
                         # safe to go
                         print("green light")
-                    elif vars.light = "red":
+                    elif vars.light == "red":
                         # stop the car
                         print("red light, stop")
                         self.myCar.setSpeed(0, 0)
@@ -98,17 +99,17 @@ class core:
                         # no light found
                         print("no traffic light found, error")
 
-                if vars.type == "b":
+                if vars.line_type == "b":
                     # both lines found
                     print("both lines found")
                     print("deviation = {}".format(vars.deviation))
 
-                elif vars.type == "y":
+                elif vars.line_type == "y":
                     # only found yellow line
                     print("yellow line found")
                     print("y_theta = {}, y_offset = {}".format(vars.theta, vars.deviation))
 
-                elif vars.type == "w":
+                elif vars.line_type == "w":
                     # only found white line
                     print("white line found")
                     print("w_theta = {}, w_offset = {}".format(vars.theta, vars.deviation))
@@ -126,7 +127,7 @@ class core:
                     rightSpd, leftSpd = 0, 0
                 else:
                     # calculate new rightSpd and leftSpd to fix the deviation
-                    rightSpd, leftSpd = myCtl.adaptive_control(rightSpd, leftSpd, vars.deviation, vars.theta, vars.type)
+                    rightSpd, leftSpd = myCtl.adaptive_control(rightSpd, leftSpd, vars.deviation, vars.theta, vars.line_type)
 
                 print("new rightSpd = {}".format(rightSpd))
                 print("new leftSpd = {}".format(leftSpd))

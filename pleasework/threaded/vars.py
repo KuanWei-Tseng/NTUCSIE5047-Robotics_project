@@ -4,7 +4,7 @@ init the global variables
 def init():
     global theta
     global deviation
-    global type
+    global line_type
     # obstacle detection
     global message
     # shutdown and exit

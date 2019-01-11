@@ -1,8 +1,9 @@
 import numpy as np
 import cv2
 import copy
+import vars
 
-class LightDetection():
+class lightDetection():
 	def __init__(self, img):
 		self._row, self._column = img.shape[0], img.shape[1]
 		self._img = np.copy(img)

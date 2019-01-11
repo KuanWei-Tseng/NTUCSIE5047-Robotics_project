@@ -16,7 +16,7 @@ class rawImage:
         # cut the image
         self.cut = np.copy(self._img[int(3*self._row/4):int(self._row), :])
         # gray scale canny edge detection
-        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(self.cut,cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (5, 5), 0)
         self.edges = cv2.Canny(blur,50,150,apertureSize = 3)
         #cv2.imwrite("../result/canny.jpg", self.edges)
@@ -154,9 +154,9 @@ class rawImage:
         row, column = int(self._row/4), self._column
 
         # find yellow lines
-        y_rho, y_theta, y_offset, y_valid = self.find_y(img, edges)
+        y_rho, y_theta, y_offset, y_valid = self.find_y()
         # find white lines
-        w_rho, w_theta, w_offset, w_valid = self.find_w(img, edges, y_offset)
+        w_rho, w_theta, w_offset, w_valid = self.find_w(y_offset)
         """
         if y_valid == 1:
             # draw yellow line
@@ -207,18 +207,18 @@ class rawImage:
             print("topy = {}, topw = {}".format(topy, topw))
             print("y_offset = {}, w_offset = {}".format(y_offset, w_offset))
             """
-            vars.theta, vars.deviation, vars.type = y_theta, deviation, "b"
+            vars.theta, vars.deviation, vars.line_type = y_theta, deviation, "b"
             return
 
         elif y_valid == 1:
-            vars.theta, vars.deviation, vars.type = y_theta, y_offset, "y"
+            vars.theta, vars.deviation, vars.line_type = y_theta, y_offset, "y"
             return
 
         elif w_valid == 1:
-            vars.theta, vars.deviation, vars.type = w_theta, w_offset, "w"
+            vars.theta, vars.deviation, vars.line_type = w_theta, w_offset, "w"
             return
 
-        vars.theta, vars.deviation, vars.type = 0, 0, "n"
+        vars.theta, vars.deviation, vars.line_type = 0, 0, "n"
         return
         """
         print("middle = {}".format(middle))
