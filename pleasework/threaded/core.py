@@ -3,6 +3,7 @@ from camera import camera
 from rawImage import rawImage
 from obws import obws
 from control import control
+from lightDetection import lightDetection
 import vars
 import numpy as np
 import time
@@ -58,18 +59,45 @@ class core:
                 img = self.myCamera.capture()
                 # init rawImage
                 raw = rawImage(img)
+                # init lightDetection
+                ld = lightDetection(img)
                 # truncate stream
                 self.myCamera.trunc()
-                # init thread
+                # init thread to find deviation
                 t1 = threading.Thread(target = raw.findDeviation, args = ())
+                # init thread to find blue line
+                t2 = threading.Thread(target = raw.find_b, args = ())
+                # init thread to fidn traffic light
+                t3 = threading.Thread(target = ld.find_light, args = ())
                 # start thread, get the deviation
                 t1.start()
+                # start thread, get blue lines
+                t2.start()
+                # start thread, get traffic light
+                t3.start()
                 # wait elapsed time
                 time.sleep(elapse)
-                # join thread, get the deviation
+                # join deviaiton thread
                 t1.join()
+                # join blue line thread
+                t2.join()
+                # join traffic light thread
+                t3.join()
                 
                 print("================================")
+                if vars.blue == True:
+                    # check traffic light
+                    if vars.light = "green":
+                        # safe to go
+                        print("green light")
+                    elif vars.light = "red":
+                        # stop the car
+                        print("red light, stop")
+                        self.myCar.setSpeed(0, 0)
+                    else:
+                        # no light found
+                        print("no traffic light found, error")
+
                 if vars.type == "b":
                     # both lines found
                     print("both lines found")

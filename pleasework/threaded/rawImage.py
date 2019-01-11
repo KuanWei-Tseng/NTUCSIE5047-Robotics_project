@@ -13,13 +13,58 @@ class rawImage:
     def __init__(self, img):
         self._row, self._column = img.shape[0], img.shape[1]
         self._img = np.copy(img)
+        # cut the image
+        self.cut = np.copy(self._img[int(3*self._row/4):int(self._row), :])
+        # gray scale canny edge detection
+        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        blur = cv2.GaussianBlur(gray, (5, 5), 0)
+        self.edges = cv2.Canny(blur,50,150,apertureSize = 3)
+        #cv2.imwrite("../result/canny.jpg", self.edges)
 
-    def find_y(self, img, edges):
+    def find_b(self):
+        
+        row, column = self.cut.shape[0], self.cut.shape[1]
+        # blue color mark (100 < B < 180, G < 100, R < 100)
+        b_cm = np.logical_and(np.logical_and(np.logical_and(self.cut[:,:,0] > 100, self.cut[:,:,0] < 180), self.cut[:,:,1] < 100), self.cut[:,:,2] < 100).astype(np.uint8)
+        # close then open
+        b_cm = cv2.morphologyEx(cv2.morphologyEx(b_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
+        # dilate
+        b_cm = cv2.dilate(b_cm, self._kernel, iterations = 1)
+        #cv2.imwrite("../result/b_mark.jpg", b_cm*255)
 
-        row, column = img.shape[0], img.shape[1]
+        # find edges
+        b_cm = b_cm - cv2.erode(b_cm, self._kernel, iterations = 1)
+        #cv2.imwrite("../result/b_inter.jpg", b_cm*255)
+        
+        # Hough line detection
+        b_lines = cv2.HoughLines(b_cm, 1, np.pi/180, self._vote)
 
+        if b_lines is None:
+            vars.blue = False
+        else:
+            """
+            for rho, theta in b_lines[:, 0]:
+                a = np.cos(theta)
+                b = np.sin(theta)
+                x0 = a * rho
+                y0 = b * rho
+                x1 = int(x0 + 1200*(-b))
+                y1 = int(y0 + 1200*(a))
+                x2 = int(x0 - 1200*(-b))
+                y2 = int(y0 - 1200*(a))
+                
+                cv2.line(img,(x1,y1),(x2,y2),(255,0,0),2)
+                cv2.imwrite("../result/b_lines.jpg", img)
+            """
+            vars.blue = True
+
+        return
+
+    def find_y(self):
+
+        row, column = self.cut.shape[0], self.cut.shape[1]
         # yellow color mark (B < 80, G > 80, R > 80)
-        y_cm = np.logical_and(np.logical_and(img[:,:,0] < 80, img[:,:,1] > 80), img[:,:,2] > 80).astype(np.uint8)
+        y_cm = np.logical_and(np.logical_and(self.cut[:,:,0] < 80, self.cut[:,:,1] > 80), self.cut[:,:,2] > 80).astype(np.uint8)
         # close then open
         y_cm = cv2.morphologyEx(cv2.morphologyEx(y_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         # dilate
@@ -27,7 +72,7 @@ class rawImage:
         #cv2.imwrite("../result/y_mark.jpg", y_cm*255)
 
         # intersection of canny and road markings
-        y_inter = (edges * y_cm > 0).astype(np.uint8)
+        y_inter = (self.edges * y_cm > 0).astype(np.uint8)
         y_inter = cv2.dilate(y_inter, self._kernel, iterations = 1)
         #cv2.imwrite("../result/y_inter.jpg", y_inter*255)
 
@@ -59,11 +104,11 @@ class rawImage:
         else:
             return y_rho, y_theta, y_offset, 1
 
-    def find_w(self, img, edges, y_offset):
+    def find_w(self, y_offset):
 
-        row, column = img.shape[0], img.shape[1]
+        row, column = self.cut.shape[0], self.cut.shape[1]
         # white color mark (B > 120, G > 120, R > 120)
-        w_cm = np.logical_and(np.logical_and(img[:,:,0] > 120, img[:,:,1] > 120), img[:,:,2] > 120).astype(np.uint8)
+        w_cm = np.logical_and(np.logical_and(self.cut[:,:,0] > 120, self.cut[:,:,1] > 120), self.cut[:,:,2] > 120).astype(np.uint8)
         # close then open
         w_cm = cv2.morphologyEx(cv2.morphologyEx(w_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         # dilate
@@ -71,7 +116,7 @@ class rawImage:
         #cv2.imwrite("../result/w_mark.jpg", w_cm*255)
 
         # intersection of canny and road markings
-        w_inter = (edges * w_cm > 0).astype(np.uint8)
+        w_inter = (self.edges * w_cm > 0).astype(np.uint8)
         w_inter = cv2.dilate(w_inter, self._kernel, iterations = 1)
         #cv2.imwrite("../result/w_inter.jpg", w_inter*255)
         
@@ -107,20 +152,6 @@ class rawImage:
     def findDeviation(self):
 
         row, column = int(self._row/4), self._column
-        # using only the lower half of the image
-        img = np.copy(self._img[int(3*self._row/4):int(self._row), :])
-        #cv2.imwrite("../result/half.jpg", img)
-
-        # expand the image
-        #img = expand(img)
-        #cv2.imwrite("../result/expanded.jpg", img)
-
-        # gray scale canny edge detection
-        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-        blur = cv2.GaussianBlur(gray, (5, 5), 0)
-        edges = cv2.Canny(blur,50,150,apertureSize = 3)
-
-        #cv2.imwrite("../result/canny.jpg", edges)
 
         # find yellow lines
         y_rho, y_theta, y_offset, y_valid = self.find_y(img, edges)
