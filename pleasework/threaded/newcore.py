@@ -4,6 +4,7 @@ from rawImage import rawImage
 from obws import obws
 from control import control
 from lightDetection import lightDetection
+from map import map
 import vars
 import numpy as np
 import time
@@ -41,6 +42,8 @@ class core:
         print("autoDrive activated")
         # initialize control 
         myCtl = control()
+        # initialize map
+        myMap = map()
         # initialize obws
         myObws = obws()
         # enable radar
@@ -90,6 +93,7 @@ class core:
                     if vars.light = "green":
                         # safe to go
                         print("green light")
+                        myMap.update()
                     elif vars.light = "red":
                         # stop the car
                         print("red light, stop")
