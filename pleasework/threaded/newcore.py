@@ -57,8 +57,8 @@ class core:
             print("Running into obstacles, stop")
             rightSpd, leftSpd = 0, 0
 
+        # both lines found, calculate new rightSpd and leftSpd to fix the deviation
         elif vars.line_type == "b":
-            # both lines found, calculate new rightSpd and leftSpd to fix the deviation
             rightSpd, leftSpd = self.myCtl.adaptive_control(rightSpd, leftSpd, vars.deviation, vars.theta, vars.line_type)
             self.state = "f"
             self.actioncounter = 0
@@ -70,6 +70,7 @@ class core:
             
         # around the corner
         elif self.state == "f":
+            print("should go forward, but found less than one line")
             # prepare to turn right
             if vars.line_type == "y":
                 self.actioncounter = 0
@@ -96,7 +97,7 @@ class core:
                     # right
                     rightSpd, leftSpd = 0, 100
                     # left
-                    if self.state = "r":
+                    if self.state = "l":
                         rightSpd, leftSpd = 100, 0
                 # stop
                 elif (self.actioncounter - 1) % 4 == 2:
@@ -167,7 +168,7 @@ class core:
         vars.shutdown = False
         # start up radar
         t_obws = threading.Thread(target = myObws.safedriving, args = ())
-        print("started")
+        print("camera warmup started")
         t_obws.start()
         # camera warm up
         for i in range(0, 5):
