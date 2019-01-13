@@ -34,10 +34,10 @@ class control:
             centSpd = 50
             return centSpd,centSpd
         if PIDval < 0:
-            rightSpd = max(20,centSpd+PIDval)
-            leftSpd = min(80,centSpd-PIDval)
+            rightSpd = max(40,centSpd+PIDval)
+            leftSpd = min(60,centSpd-PIDval)
         else:
-            rightSpd = min(80,centSpd+PIDval)
+            rightSpd = min(90,centSpd+PIDval)
             leftSpd = max(20,centSpd-PIDval)
 
         return rightSpd, leftSpd
@@ -57,7 +57,7 @@ class control:
             PIDval = self.findPIDval(dev)
         elif type == "n":
             rightSpd = 50
-            leftSped = 50
+            leftSped = 40
             return rightSpd, leftSpd
         rightSpd, leftSpd = self.PIDLanefollower(PIDval,centSpd)
         return rightSpd, leftSpd

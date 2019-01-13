@@ -15,8 +15,8 @@ class lightDetection():
 		green_mask = cv2.inRange(img_hsv, green_mask_lower, green_mask_upper)
 	
 		percentage_green = np.count_nonzero(green_mask) / (sub_img.shape[0]*sub_img.shape[1])
-		#print("green:")
-		#print(percentage_green)
+		print("green:")
+		print(percentage_green)
 		if percentage_green > 0.3:
 			return "green"
 		
@@ -30,8 +30,8 @@ class lightDetection():
 	
 		red_mask = red_mask1 + red_mask2
 		percentage_red = np.count_nonzero(red_mask) / (sub_img.shape[0]*sub_img.shape[1])
-		#print("red:")
-		#print(percentage_red)
+		print("red:")
+		print(percentage_red)
 
 		if percentage_red > 0.3:
 			return "red"
@@ -83,7 +83,7 @@ class lightDetection():
 		signal = "NULL"
 		for c in cnts:
 			area = cv2.contourArea(c)
-			if area >= 10 and area <= 80:
+			if area >= 5 and area <= 80:
 				(x, y, w, h) = cv2.boundingRect(c)
 				sub_img = np.zeros((int(h),int(w))).astype(np.uint8)
 				#boundaries of light
@@ -107,5 +107,4 @@ class lightDetection():
 				
 				#cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 				#cv2.imwrite('find.jpg',sub_img)
-
 		return

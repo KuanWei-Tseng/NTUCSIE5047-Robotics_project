@@ -75,7 +75,7 @@ class core:
 
         # should go straight
         elif self.state == "s":
-            rightSpd, leftSpd = 50, 50
+            rightSpd, leftSpd = 50, 40
             self.actioncounter = 0
             
         elif self.state == "f":
@@ -105,15 +105,16 @@ class core:
             if self.actioncounter < 1:
                 rightSpd, leftSpd = 0, 0
             elif self.actioncounter == 1:
-                rightSpd, leftSpd = 50, 50
+                rightSpd, leftSpd = 0, 100
+                self.actioncounter += 1
             else:
                 # turning
                 if (self.actioncounter - 2) % 5 == 0 or (self.actioncounter - 2) % 5 == 1:
                     # right
-                    rightSpd, leftSpd = 0, 90
+                    rightSpd, leftSpd = 0, 100
                     # left
                     if self.state == "l":
-                        rightSpd, leftSpd = 90, 0
+                        rightSpd, leftSpd = 80, 10
                 # stop
                 elif (self.actioncounter - 2) % 5 == 2:
                     rightSpd, leftSpd = 0, 0
@@ -202,7 +203,7 @@ class core:
 
         # start going forward
         if self.debug == "False":
-            self.myCar.setSpeed(50, 50)
+            self.myCar.setSpeed(40, 40)
         rightSpd, leftSpd = 50, 50
 
         while True:
@@ -222,6 +223,7 @@ class core:
                 # init thread to find traffic light
                 tthread = threading.Thread(target = ld.find_light, args = ())
                 # start threads
+                vars.light = "NULL"
                 dthread.start()
                 bthread.start()
                 tthread.start()

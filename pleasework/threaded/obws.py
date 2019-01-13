@@ -20,9 +20,9 @@ class obws:
 
 				dist1 = self.sonic.measure()
 				#print("distance: %f"%dist1)
-				if dist1 < 30:
+				if dist1 < 50:
 					time.sleep(0.1)
-					if self.sonic.measure()< 30:
+					if self.sonic.measure()< 50:
 						vars.message = 0; # message: 0->about to crash
 						#self.sendmesseage(message)
 						continue

@@ -5,7 +5,7 @@ class map:
    and decide where to go next
    """
    def  __init__(self):
-       self.pos = 1
+       self.pos = 4
        self.decide()
 
    # make a choice based on current position
