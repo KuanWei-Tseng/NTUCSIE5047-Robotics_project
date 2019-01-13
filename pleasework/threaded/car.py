@@ -42,10 +42,13 @@ class car:
 		side = 1 -> right wheels
 		side = -1 -> left wheels
 		"""
-		# speed is out of bound
-		if speed > 100 or speed < 0:
-			print("speed input is {}, out of bound".format(speed))
 
+		# speed is out of bound
+        
+        # if speed > 100 or speed < 0:
+		#	print("speed input is {}, out of bound".format(speed))
+		if speed < 0:
+			speed = -speed
 		# set right speed
 		if side == 1:
 			self.Rspd = speed

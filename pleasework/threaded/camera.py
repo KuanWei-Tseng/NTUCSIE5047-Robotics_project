@@ -6,7 +6,7 @@ class camera:
         # initialize the camera and grab a reference to the raw camera capture
         self.camera = PiCamera()
         self.camera.rotation = 180
-        self.camera.resolution = (640, 480)
+        self.camera.resolution = (1280, 480)
         self.rawCapture = PiRGBArray(self.camera)
  
     def capture(self):

@@ -3,40 +3,42 @@ class control:
     prev_dev = 0
     Kp = 0.5
     Ki = 0
-    Kd = 0
+    Kd = 0.1
     Kw = 1
     Ky = 1
     T = 10
     def __init__(self):
         self.int_dev = 0
-        self.dev = 0
+        self.prev_dev = 0
 
     def findPIDval(self,dev):
         # dev: current deviation
         # prev_dev: previous deviation
         # P: Proportional term:
-        P = self.Kp * self.dev
+        P = self.Kp * dev
         # I: Integral term:
-        I = self.Ki * (self.int_dev + self.dev)
+        I = self.Ki * (self.int_dev + dev)
         # D: Differential term:
-        D = self.Kd * (self.dev - self.prev_dev)
+        D = self.Kd * (dev - self.prev_dev)
         # Record current data:
         self.int_dev = self.int_dev + self.prev_dev
         self.prev_dev = dev
         # Calculate the PID control power
         PIDval = P + I + D
+        print("PID:{}".format(PIDval))
         return PIDval
 
     def PIDLanefollower(self,PIDval,centSpd):
-
-        if abs(PIDval) < 20:
+        print("centSpd:{}".format(centSpd))
+        if abs(PIDval) < 10:
+            centSpd = 50
             return centSpd,centSpd
         if PIDval < 0:
-            rightSpd = max(-100,centSpd-PIDval)
-            leftSpd = min(100,centSpd+PIDval)
+            rightSpd = max(20,centSpd+PIDval)
+            leftSpd = min(80,centSpd-PIDval)
         else:
-            rightSpd = min(100,centSpd+PIDval)
-            leftSpd = max(-100,centSpd-PIDval)
+            rightSpd = min(80,centSpd+PIDval)
+            leftSpd = max(20,centSpd-PIDval)
 
         return rightSpd, leftSpd
 
@@ -47,13 +49,22 @@ class control:
             PIDval = self.findPIDval(dev)
 
         elif type == "w":
-            dev = (-1)*abs(600-dev)* self.Kw  # Case: Turning Left 
-            PIDval = self.findPIDval(dev)
-            
+            #dev = (-1)*abs(600-dev)* self.Kw  # Case: Turning Left 
+            #PIDval = self.findPIDval(dev)
+            rightSpd = 0
+            leftSped = 0
+            return rightSpd, leftSpd
         elif type == "y":
-            dev = abs(dev)* self.Ky
-            PIDval = self.findPIDval(dev)
-
+            #dev = abs(dev)* self.Ky
+            #PIDval = self.findPIDval(dev)
+            rightSpd = 0
+            leftSped = 0
+            return rightSpd, leftSpd
+        elif type == "n":
+            print("No Line:")
+            rightSpd = 0
+            leftSped = 0
+            return rightSpd, leftSpd
         rightSpd, leftSpd = self.PIDLanefollower(PIDval,centSpd)
         return rightSpd, leftSpd
 

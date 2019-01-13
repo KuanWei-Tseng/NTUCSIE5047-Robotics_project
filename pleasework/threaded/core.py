@@ -37,7 +37,7 @@ class core:
             print("manualDrive mode")
             self.manualDrive()
 
-    def autoDrive(self, elapse = 0.2):
+    def autoDrive(self, elapse = 0.1):
         print("autoDrive activated")
         # initialize control 
         myCtl = control()
@@ -49,10 +49,15 @@ class core:
         t_obws = threading.Thread(target = myObws.safedriving, args = ())
         print("started")
         t_obws.start()
+        for i in range(0, 5):
+            img = self.myCamera.capture()
+            self.myCamera.trunc()
+            time.sleep(0.2)
+
         # start going forward
         if self.debug == "False":
-            self.myCar.setSpeed(50, 50)
-        counter = 0
+            self.myCar.setSpeed(40, 40)
+        rightSpd, leftSpd = 40, 40
 
         while True:
             try:
@@ -69,13 +74,13 @@ class core:
                 # init thread to find blue line
                 t2 = threading.Thread(target = raw.find_b, args = ())
                 # init thread to find traffic light
-                t3 = threading.Thread(target = ld.find_light, args = ())
+                # t3 = threading.Thread(target = ld.find_light, args = ())
                 # start thread, get the deviation
                 t1.start()
                 # start thread, get blue lines
                 t2.start()
                 # start thread, get traffic light
-                t3.start()
+                # t3.start()
                 # wait elapsed time
                 time.sleep(elapse)
                 # join deviation thread
@@ -83,10 +88,15 @@ class core:
                 # join blue line thread
                 t2.join()
                 # join traffic light thread
-                t3.join()
+                # t3.join()
                 
                 print("================================")
+                
                 if vars.blue == True:
+                    print("Blue line found")
+                    self.myCar.setSpeed(0, 0)
+                    break
+                    """
                     # check traffic light
                     if vars.light == "green":
                         # safe to go
@@ -98,6 +108,7 @@ class core:
                     else:
                         # no light found
                         print("no traffic light found, error")
+                    """
 
                 if vars.line_type == "b":
                     # both lines found
@@ -115,7 +126,8 @@ class core:
                     print("w_theta = {}, w_offset = {}".format(vars.theta, vars.deviation))
 
                 # get current speed
-                rightSpd, leftSpd = self.myCar.getSpeed()
+                if self.debug == "False":
+                    rightSpd, leftSpd = self.myCar.getSpeed()
 
                 print("current rightSpd = {}".format(rightSpd))
                 print("current leftSpd = {}".format(leftSpd))

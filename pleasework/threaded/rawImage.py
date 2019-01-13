@@ -15,6 +15,7 @@ class rawImage:
         self._img = np.copy(img)
         # cut the image
         self.cut = np.copy(self._img[int(3*self._row/4):int(self._row), :])
+        self.scut = np.copy(self._img[int(4*self._row/5):int(self._row), :])
         # gray scale canny edge detection
         gray = cv2.cvtColor(self.cut,cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -23,9 +24,9 @@ class rawImage:
 
     def find_b(self):
         
-        row, column = self.cut.shape[0], self.cut.shape[1]
+        row, column = self.scut.shape[0], self.scut.shape[1]
         # blue color mark (100 < B < 180, G < 100, R < 100)
-        b_cm = np.logical_and(np.logical_and(np.logical_and(self.cut[:,:,0] > 100, self.cut[:,:,0] < 180), self.cut[:,:,1] < 100), self.cut[:,:,2] < 100).astype(np.uint8)
+        b_cm = np.logical_and(np.logical_and(np.logical_and(self.scut[:,:,0] > 100, self.scut[:,:,0] < 180), self.scut[:,:,1] < 100), self.scut[:,:,2] < 100).astype(np.uint8)
         # close then open
         b_cm = cv2.morphologyEx(cv2.morphologyEx(b_cm, cv2.MORPH_CLOSE, self._kernel), cv2.MORPH_OPEN, self._kernel)
         # dilate
@@ -193,7 +194,7 @@ class rawImage:
         cv2.imwrite("../result/road_lines.jpg",img)
         """
         if y_valid == 1 and w_valid == 1:
-            error = 0
+            error = 30
             middle = column/2 + error
             deviation = middle - int((w_offset + y_offset)/2)
             """
