@@ -94,10 +94,10 @@ class core:
                 # turning
                 if (self.actioncounter - 1) % 4 == 0 or (self.actioncounter - 1) % 4 == 1:
                     # right
-                    rightSpd, leftSpd = 20, 80
+                    rightSpd, leftSpd = 0, 100
                     # left
                     if self.state = "r":
-                        rightSpd, leftSpd = 80, 20
+                        rightSpd, leftSpd = 100, 0
                 # stop
                 elif (self.actioncounter - 1) % 4 == 2:
                     rightSpd, leftSpd = 0, 0
@@ -132,6 +132,7 @@ class core:
             # only found white line
             print("white line found")
             print("w_theta = {}, w_offset = {}".format(vars.theta, vars.deviation))
+
         elif vars.line_type == "n":
             # nothing found
             print("nothing found")
@@ -148,9 +149,13 @@ class core:
                 print("red light, stop")
                 self.state = "stop"
             else:
-                # no light found
-                print("no traffic light found, error")
-                self.state = "stop"
+                # no light found, turning
+                print("no traffic light found, turning")
+                if self.myMap.get_pos() == 1:
+                    self.state = "l"
+                elif self.myMap.get_pos() == 4:
+                    self.state = "r"
+        print("current state = {}".format(self.state))
 
     def autoDrive(self, elapse = 0.2):
         print("autoDrive activated")
@@ -164,9 +169,17 @@ class core:
         t_obws = threading.Thread(target = myObws.safedriving, args = ())
         print("started")
         t_obws.start()
+        # camera warm up
+        for i in range(0, 5):
+            img = self.myCamera.capture()
+            self.myCamera.trunc()
+            time.sleep(0.2)
+
         # start going forward
-        self.myCar.setSpeed(40, 40)
+        if self.debug == "False":
+            self.myCar.setSpeed(40, 40)
         rightSpd, leftSpd = 40, 40
+
         while True:
             try:
                 # get the image from camera
@@ -198,11 +211,6 @@ class core:
                 self.get_vars_blue()
                 self.get_vars_type()
                 self.get_action()
-                # pass speed arguments to myCar
-                if self.debug == "False":
-                    self.myCar.setSpeed(rightSpd, leftSpd)
-
-                time.sleep(elapse)
 
             except KeyboardInterrupt:
                 print("keyboard interrupt signal caught, exit")

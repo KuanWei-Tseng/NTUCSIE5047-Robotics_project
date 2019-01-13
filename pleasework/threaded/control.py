@@ -61,7 +61,6 @@ class control:
             leftSped = 0
             return rightSpd, leftSpd
         elif type == "n":
-            print("No Line:")
             rightSpd = 0
             leftSped = 0
             return rightSpd, leftSpd

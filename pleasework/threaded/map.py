@@ -66,3 +66,7 @@ class map:
        self.transition()
        self.decide()
        return action
+
+   # get position
+   def get_pos(self):
+      return self.pos
