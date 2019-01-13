@@ -57,25 +57,30 @@ class core:
             print("Running into obstacles, stop")
             rightSpd, leftSpd = 0, 0
 
-        # should stop
-        elif self.state == "stop":
-            rightSpd, leftSpd = 0, 0
-            
         # both lines found, calculate new rightSpd and leftSpd to fix the deviation
-        elif vars.line_type == "b" and (((self.state == "l" or self.state == "r") and self.actioncounter > 2) or self.state == "f" or self.state == "s"):
+        elif ((self.state == "l" or self.state == "r") and self.actioncounter >=9):
 
+            rightSpd, leftSpd = self.myCtl.adaptive_control(50, 50, vars.deviation, vars.theta, vars.line_type)
+            self.state = "f"
+            self.actioncounter = 0
+            
+        elif vars.line_type == "b" and (self.state == "f" or self.state == "s"):
             rightSpd, leftSpd = self.myCtl.adaptive_control(rightSpd, leftSpd, vars.deviation, vars.theta, vars.line_type)
             self.state = "f"
             self.actioncounter = 0
+            
+        # should stop
+        elif self.state == "stop":
+            rightSpd, leftSpd = 0, 0
 
         # should go straight
         elif self.state == "s":
-            rightSpd, leftSpd = 40, 40
+            rightSpd, leftSpd = 50, 50
             self.actioncounter = 0
             
-        # around the corner
         elif self.state == "f":
             print("should go forward, but found less than one line")
+            """
             # prepare to turn right
             if vars.line_type == "y":
                 self.actioncounter = 0
@@ -90,27 +95,36 @@ class core:
             else:
                 print("error")
                 rightSpd, leftSpd = 0, 0
+            self.state = "stop"
+            """
+            rightSpd, leftSpd = self.myCtl.adaptive_control(rightSpd, leftSpd, vars.deviation, vars.theta, vars.line_type)
 
         # turning session
         elif self.state == "r" or self.state == "l":
             # going straight
-            if self.actioncounter < 0:
-                rightSpd, leftSpd = 40, 40
+            if self.actioncounter < 1:
+                rightSpd, leftSpd = 0, 0
+            elif self.actioncounter == 1:
+                rightSpd, leftSpd = 50, 50
             else:
                 # turning
-                if (self.actioncounter) % 4 == 0 or (self.actioncounter) % 4 == 1:
+                if (self.actioncounter - 2) % 5 == 0 or (self.actioncounter - 2) % 5 == 1:
                     # right
-                    rightSpd, leftSpd = 0, 100
+                    rightSpd, leftSpd = 0, 90
                     # left
                     if self.state == "l":
-                        rightSpd, leftSpd = 100, 0
+                        rightSpd, leftSpd = 90, 0
                 # stop
-                elif (self.actioncounter) % 4 == 2:
+                elif (self.actioncounter - 2) % 5 == 2:
                     rightSpd, leftSpd = 0, 0
 
                 # going straight
+                elif (self.actioncounter - 2) % 5 == 3:
+                    rightSpd, leftSpd = 50, 50
+
+                # stop
                 else:
-                    rightSpd, leftSpd = 40, 40
+                    rightSpd, leftSpd = 0, 0
             self.actioncounter += 1
             
         print("new rightSpd = {}".format(rightSpd))
@@ -119,7 +133,9 @@ class core:
         # pass speed arguments to myCar
         if self.debug == "False":
             self.myCar.setSpeed(rightSpd, leftSpd)
-
+            
+        print("current state = {}".format(self.state))
+        
     def get_vars_type(self):
         if vars.line_type == "b":
             # both lines found
@@ -159,7 +175,10 @@ class core:
                     self.state = "l"
                 elif self.myMap.get_pos() == 4:
                     self.state = "r"
-        print("current state = {}".format(self.state))
+                    
+        elif self.state == "stop" and vars.light == "green":
+            print("green light")
+            self.state = self.myMap.update()
 
     def autoDrive(self, elapse = 0.2):
         print("autoDrive activated")
@@ -183,8 +202,8 @@ class core:
 
         # start going forward
         if self.debug == "False":
-            self.myCar.setSpeed(40, 40)
-        rightSpd, leftSpd = 40, 40
+            self.myCar.setSpeed(50, 50)
+        rightSpd, leftSpd = 50, 50
 
         while True:
             try:

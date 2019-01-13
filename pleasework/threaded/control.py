@@ -49,20 +49,15 @@ class control:
             PIDval = self.findPIDval(dev)
 
         elif type == "w":
-            #dev = (-1)*abs(600-dev)* self.Kw  # Case: Turning Left 
-            #PIDval = self.findPIDval(dev)
-            rightSpd = 0
-            leftSped = 0
-            return rightSpd, leftSpd
+            dev = 500  # Case: Turning Left 
+            PIDval = self.findPIDval(dev)
+            
         elif type == "y":
-            #dev = abs(dev)* self.Ky
-            #PIDval = self.findPIDval(dev)
-            rightSpd = 0
-            leftSped = 0
-            return rightSpd, leftSpd
+            dev = -500
+            PIDval = self.findPIDval(dev)
         elif type == "n":
-            rightSpd = 0
-            leftSped = 0
+            rightSpd = 50
+            leftSped = 50
             return rightSpd, leftSpd
         rightSpd, leftSpd = self.PIDLanefollower(PIDval,centSpd)
         return rightSpd, leftSpd

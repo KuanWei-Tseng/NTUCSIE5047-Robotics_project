@@ -5,7 +5,7 @@ class map:
    and decide where to go next
    """
    def  __init__(self):
-       self.pos = 4
+       self.pos = 1
        self.decide()
 
    # make a choice based on current position
@@ -39,6 +39,7 @@ class map:
 
    # get new pos based on current pos and action
    def transition(self):
+      action = self.choice
       if self.pos == 1:
          if action == "s":
             self.pos = 1

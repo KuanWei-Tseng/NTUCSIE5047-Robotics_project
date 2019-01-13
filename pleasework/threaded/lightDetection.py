@@ -63,7 +63,7 @@ class lightDetection():
 
 	def find_light(self):
 
-		image = np.copy(self._img[0:int(3*self._row/7), int(self._column/3):self._column])
+		image = np.copy(self._img)
 		#image = np.copy(self._img)
 		# convert the resized image to grayscale, blur it slightly,
 		# and threshold it			
@@ -83,14 +83,14 @@ class lightDetection():
 		signal = "NULL"
 		for c in cnts:
 			area = cv2.contourArea(c)
-			if area >= 20 and area <= 80:
+			if area >= 10 and area <= 80:
 				(x, y, w, h) = cv2.boundingRect(c)
 				sub_img = np.zeros((int(h),int(w))).astype(np.uint8)
 				#boundaries of light
-				up = max(0, y-15)
-				down = min(int(3*self._row/7),y+15)
-				left = max(0, x-15)
-				right = min(int(2*self._column/3),x+15)
+				up = max(0, y-25)
+				down = min(int(self._row),y+25)
+				left = max(0, x-25)
+				right = min(int(self._column),x+25)
 				# debug (whole picture)				
 				'''up = max(0, y-15)
 				down = min(self._row, y+15)
@@ -100,11 +100,12 @@ class lightDetection():
 				signal_light = self.light_detector(sub_img)
 				
 				if signal_light == "red" or signal_light == "green":
-					signal = signal_light
-				c = c.astype("float")
-				c = c.astype("int")
+					vars.light = signal_light
+
+				#c = c.astype("float")
+				#c = c.astype("int")
 				
 				#cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 				#cv2.imwrite('find.jpg',sub_img)
-		vars.light = signal
+
 		return
