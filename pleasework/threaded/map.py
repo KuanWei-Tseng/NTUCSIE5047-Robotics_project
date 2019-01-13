@@ -5,7 +5,7 @@ class map:
    and decide where to go next
    """
    def  __init__(self):
-       self.pos = 1
+       self.pos = 4
        self.decide()
 
    # make a choice based on current position
@@ -48,7 +48,7 @@ class map:
       elif self.pos == 2:
          self.pos = 3
 
-      elif self.pos = 3:
+      elif self.pos == 3:
          if action == "l":
             self.pos = 1
          else:

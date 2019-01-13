@@ -4,6 +4,7 @@ from rawImage import rawImage
 from obws import obws
 from control import control
 from lightDetection import lightDetection
+from map import map
 import vars
 import numpy as np
 import time
@@ -15,6 +16,12 @@ class core:
     def __init__(self, auto, debug):
         # initialize car object
         self.myCar = car()
+        # initialize current state
+        self.state = "f"
+        # initialize map
+        self.myMap = map()
+        # initialize action counter
+        self.actioncounter = 0
         # initialize camera
         self.myCamera = camera()
         # initialize global variables
@@ -23,7 +30,7 @@ class core:
         self.debug = debug
 
         # get ready
-        time.sleep(2)
+        time.sleep(1)
         
         print("myCar and myCamera startup completed")
 
@@ -37,18 +44,138 @@ class core:
             print("manualDrive mode")
             self.manualDrive()
 
-    def autoDrive(self, elapse = 0.1):
+    def get_action(self):
+        # get current speed
+        rightSpd, leftSpd = self.myCar.getSpeed()
+
+        print("current rightSpd = {}".format(rightSpd))
+        print("current leftSpd = {}".format(leftSpd))
+
+        # running into obstacles
+        if vars.message == 0:
+            # stop
+            print("Running into obstacles, stop")
+            rightSpd, leftSpd = 0, 0
+
+        # should stop
+        elif self.state == "stop":
+            rightSpd, leftSpd = 0, 0
+            
+        # both lines found, calculate new rightSpd and leftSpd to fix the deviation
+        elif vars.line_type == "b" and (((self.state == "l" or self.state == "r") and self.actioncounter > 2) or self.state == "f" or self.state == "s"):
+
+            rightSpd, leftSpd = self.myCtl.adaptive_control(rightSpd, leftSpd, vars.deviation, vars.theta, vars.line_type)
+            self.state = "f"
+            self.actioncounter = 0
+
+        # should go straight
+        elif self.state == "s":
+            rightSpd, leftSpd = 40, 40
+            self.actioncounter = 0
+            
+        # around the corner
+        elif self.state == "f":
+            print("should go forward, but found less than one line")
+            # prepare to turn right
+            if vars.line_type == "y":
+                self.actioncounter = 0
+                self.state = "r"
+                rightSpd, leftSpd = 40, 40
+            # prepare to turn left
+            elif vars.line_type == "w":
+                self.actioncounter = 0
+                self.state = "l"
+                rightSpd, leftSpd = 40, 40
+            # error
+            else:
+                print("error")
+                rightSpd, leftSpd = 0, 0
+
+        # turning session
+        elif self.state == "r" or self.state == "l":
+            # going straight
+            if self.actioncounter < 0:
+                rightSpd, leftSpd = 40, 40
+            else:
+                # turning
+                if (self.actioncounter) % 4 == 0 or (self.actioncounter) % 4 == 1:
+                    # right
+                    rightSpd, leftSpd = 0, 100
+                    # left
+                    if self.state == "l":
+                        rightSpd, leftSpd = 100, 0
+                # stop
+                elif (self.actioncounter) % 4 == 2:
+                    rightSpd, leftSpd = 0, 0
+
+                # going straight
+                else:
+                    rightSpd, leftSpd = 40, 40
+            self.actioncounter += 1
+            
+        print("new rightSpd = {}".format(rightSpd))
+        print("new leftSpd = {}".format(leftSpd))
+
+        # pass speed arguments to myCar
+        if self.debug == "False":
+            self.myCar.setSpeed(rightSpd, leftSpd)
+
+    def get_vars_type(self):
+        if vars.line_type == "b":
+            # both lines found
+            print("both lines found")
+            print("deviation = {}".format(vars.deviation))
+            
+        elif vars.line_type == "y":
+            # only found yellow line
+            print("yellow line found")
+            print("y_theta = {}, y_offset = {}".format(vars.theta, vars.deviation))
+
+        elif vars.line_type == "w":
+            # only found white line
+            print("white line found")
+            print("w_theta = {}, w_offset = {}".format(vars.theta, vars.deviation))
+
+        elif vars.line_type == "n":
+            # nothing found
+            print("nothing found")
+
+    def get_vars_blue(self):
+        if vars.blue == True and self.state == "f":
+            # check traffic light
+            print("blue line spotted")
+            if vars.light == "green":
+                # safe to go
+                print("green light")
+                self.state = self.myMap.update()
+            elif vars.light == "red":
+                # stop the car
+                print("red light, stop")
+                self.state = "stop"
+            else:
+                # no light found, turning
+                print("no traffic light found, turning")
+                if self.myMap.get_pos() == 1:
+                    self.state = "l"
+                elif self.myMap.get_pos() == 4:
+                    self.state = "r"
+        print("current state = {}".format(self.state))
+
+    def autoDrive(self, elapse = 0.2):
         print("autoDrive activated")
         # initialize control 
-        myCtl = control()
+        self.myCtl = control()
         # initialize obws
         myObws = obws()
         # enable radar
         vars.shutdown = False
+        vars.blue = False
+        vars.light = "NULL"
         # start up radar
         t_obws = threading.Thread(target = myObws.safedriving, args = ())
-        print("started")
+        print("camera warmup started")
         t_obws.start()
+        # camera warm up
         for i in range(0, 5):
             img = self.myCamera.capture()
             self.myCamera.trunc()
@@ -70,85 +197,26 @@ class core:
                 # truncate stream
                 self.myCamera.trunc()
                 # init thread to find deviation
-                t1 = threading.Thread(target = raw.findDeviation, args = ())
+                dthread = threading.Thread(target = raw.findDeviation, args = ())
                 # init thread to find blue line
-                t2 = threading.Thread(target = raw.find_b, args = ())
+                bthread = threading.Thread(target = raw.find_b, args = ())
                 # init thread to find traffic light
-                # t3 = threading.Thread(target = ld.find_light, args = ())
-                # start thread, get the deviation
-                t1.start()
-                # start thread, get blue lines
-                t2.start()
-                # start thread, get traffic light
-                # t3.start()
+                tthread = threading.Thread(target = ld.find_light, args = ())
+                # start threads
+                dthread.start()
+                bthread.start()
+                tthread.start()
                 # wait elapsed time
                 time.sleep(elapse)
-                # join deviation thread
-                t1.join()
-                # join blue line thread
-                t2.join()
-                # join traffic light thread
-                # t3.join()
+                # join threads
+                dthread.join()
+                bthread.join()
+                tthread.join()
                 
                 print("================================")
-                
-                if vars.blue == True:
-                    print("Blue line found")
-                    self.myCar.setSpeed(0, 0)
-                    break
-                    """
-                    # check traffic light
-                    if vars.light == "green":
-                        # safe to go
-                        print("green light")
-                    elif vars.light == "red":
-                        # stop the car
-                        print("red light, stop")
-                        self.myCar.setSpeed(0, 0)
-                    else:
-                        # no light found
-                        print("no traffic light found, error")
-                    """
-
-                if vars.line_type == "b":
-                    # both lines found
-                    print("both lines found")
-                    print("deviation = {}".format(vars.deviation))
-
-                elif vars.line_type == "y":
-                    # only found yellow line
-                    print("yellow line found")
-                    print("y_theta = {}, y_offset = {}".format(vars.theta, vars.deviation))
-
-                elif vars.line_type == "w":
-                    # only found white line
-                    print("white line found")
-                    print("w_theta = {}, w_offset = {}".format(vars.theta, vars.deviation))
-
-                # get current speed
-                if self.debug == "False":
-                    rightSpd, leftSpd = self.myCar.getSpeed()
-
-                print("current rightSpd = {}".format(rightSpd))
-                print("current leftSpd = {}".format(leftSpd))
-
-                # running into obstacles
-                if vars.message == 0:
-                    # stop
-                    print("Running into obstacles, stop")
-                    rightSpd, leftSpd = 0, 0
-                else:
-                    # calculate new rightSpd and leftSpd to fix the deviation
-                    rightSpd, leftSpd = myCtl.adaptive_control(rightSpd, leftSpd, vars.deviation, vars.theta, vars.line_type)
-
-                print("new rightSpd = {}".format(rightSpd))
-                print("new leftSpd = {}".format(leftSpd))
-
-                # pass speed arguments to myCar
-                if self.debug == "False":
-                    self.myCar.setSpeed(rightSpd, leftSpd)
-
-                time.sleep(elapse)
+                self.get_vars_blue()
+                self.get_vars_type()
+                self.get_action()
 
             except KeyboardInterrupt:
                 print("keyboard interrupt signal caught, exit")
