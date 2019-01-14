@@ -111,17 +111,17 @@ class core:
                 # turning
                 if (self.actioncounter - 2) % 5 == 0 or (self.actioncounter - 2) % 5 == 1:
                     # right
-                    rightSpd, leftSpd = 0, 100
+                    rightSpd, leftSpd = 0, 70
                     # left
                     if self.state == "l":
-                        rightSpd, leftSpd = 80, 10
+                        rightSpd, leftSpd = 70, 10
                 # stop
                 elif (self.actioncounter - 2) % 5 == 2:
                     rightSpd, leftSpd = 0, 0
 
                 # going straight
                 elif (self.actioncounter - 2) % 5 == 3:
-                    rightSpd, leftSpd = 50, 50
+                    rightSpd, leftSpd = 60, 40
 
                 # stop
                 else:
@@ -204,12 +204,14 @@ class core:
         # start going forward
         if self.debug == "False":
             self.myCar.setSpeed(40, 40)
-        rightSpd, leftSpd = 50, 50
+        rightSpd, leftSpd = 60, 50
 
+        img_buff = []
         while True:
             try:
                 # get the image from camera
                 img = self.myCamera.capture()
+                img_buff.append(img)
                 # init rawImage
                 raw = rawImage(img)
                 # init lightDetection
@@ -245,6 +247,8 @@ class core:
                 self.myCar.turnoff()
                 self.myCamera.exit()
                 t_obws.join()
+                for i, img in enumerate(img_buff):
+                    cv2.imwrite("../pic/" + i + ".jpg", img)
                 break
 
         return
