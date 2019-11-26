@@ -15,7 +15,7 @@ Below are some functionalities that we implemented:
 - Obstacle detection and avoidance
 - Traffic light recognition
 
-For more details, please check our report [here](https://github.com/juichiehchang/NTUCSIE5047-Robotics_project/blob/master/report.pdf)
+For more details, please check our [report](https://github.com/juichiehchang/NTUCSIE5047-Robotics_project/blob/master/report.pdf)
 
 3D CAD model of our robot car:
 ![Alt text](https://github.com/juichiehchang/NTUCSIE5047-Robotics_project/blob/master/Final.png)
